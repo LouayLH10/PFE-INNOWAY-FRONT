@@ -23,7 +23,7 @@ export default function LayoutClient({
   // ✅ 👉 SI AUTH → CENTER
   if (isAuthPage) {
     return (
-      <div className="flex items-center justify-center  min-h-screen bg-gray-500 min-w-full">
+      <div className="flex items-center justify-center  min-h-screen   w-screen">
         {children}
       </div>
     );
