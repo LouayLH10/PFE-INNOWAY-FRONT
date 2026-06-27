@@ -187,7 +187,7 @@ const user=getUserFromToken();
             </div>
 
             {/* AVATAR */}
-            <div className={`w-14 h-14 rounded-2xl bg-[#6C4DFF] text-white ${getColorFromName(user?.name)} flex items-center justify-center font-bold text-lg shadow-md `}>
+            <div className={`w-14 h-14 rounded-2xl bg-[#6C4DFF] text-white ${getColorFromName(user?.name ?? "")} flex items-center justify-center font-bold text-lg shadow-md `}>
 
            {user?.name.charAt(0).toUpperCase()}
 
