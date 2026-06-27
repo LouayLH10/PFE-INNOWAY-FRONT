@@ -20,7 +20,7 @@ function VerificationForm() {
     console.log("Code entered:", code);
 
     // Example API call
-    // await axios.post("http://localhost:3200/auth/verify-code", { code });
+    // await axios.post("http://process.env.BACKLINK/auth/verify-code", { code });
   };
 
   return (

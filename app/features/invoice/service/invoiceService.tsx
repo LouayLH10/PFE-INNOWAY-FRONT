@@ -3,7 +3,7 @@ import { api } from "../../../api/api";
 export const fetchInvoice = async (userId: number) => {
   try {
     const res = await api.get(
-      `http://localhost:3200/invoice/contact/${userId}`
+      `/invoice/contact/${userId}`
     );
 
     console.log(res.data); // debug
@@ -23,7 +23,7 @@ export const downloadInvoice =async(id:number)=>{
   
     try {
       const res = api.get(
-        `http://localhost:3200/invoice/pdf/${id}`,
+        `/invoice/pdf/${id}`,
         { responseType: "blob" }
       );
 

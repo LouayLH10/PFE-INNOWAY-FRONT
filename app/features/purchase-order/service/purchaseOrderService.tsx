@@ -3,7 +3,7 @@ import { api } from "../../../api/api";
 export const fetchPO = async (userId: number) => {
   try {
     const res = await api.get(
-      `http://localhost:3200/purchase-orders/contact/${userId}`
+      `/purchase-orders/contact/${userId}`
     );
 
     console.log(res.data); // debug
@@ -23,7 +23,7 @@ export const downloadPO =async(id:number)=>{
   
     try {
       const res = api.get(
-        `http://localhost:3200/purchase-orders/pdf/${id}`,
+        `/purchase-orders/pdf/${id}`,
         { responseType: "blob" }
       );
 

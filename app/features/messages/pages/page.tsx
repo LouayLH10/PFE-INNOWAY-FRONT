@@ -538,7 +538,7 @@ useEffect(() => {
 
     {msg.fileUrl && (
       <a
-        href={`http://localhost:3200${msg.fileUrl}`}
+        href={`https://${process.env.BACKLINK}${msg.fileUrl}`}
         target="_blank"
         rel="noreferrer"
         className={`block mt-2 underline text-sm ${

@@ -15,6 +15,7 @@ import { fetchPO } from '../../purchase-order/service/purchaseOrderService';
 import { fetchPayment } from '../../payment/service/paymentService';
 import { fetchProject } from '../../projects/service/projectService';
 import { generateDashboardPdf, sendDashboardEmail } from '../service/dashboardService';
+import { api } from '@/app/api/api';
 
 function page() {
 const [nbQuote, setNbQuote] = useState(0);
@@ -27,7 +28,9 @@ const [amount,setAmount]=useState(0)
 const [balance,setDueBalance]=useState(0)
 const user = getUserFromToken();
 const dashboardRef = useRef<HTMLDivElement>(null);
-const [invoiceStats, setInvoiceStats] = useState({
+console.log(api.getUri({
+  url: `/quote/contact/1`,
+}));const [invoiceStats, setInvoiceStats] = useState({
   paid: 0,
   sent: 0,
   cancelled: 0,

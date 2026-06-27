@@ -57,7 +57,7 @@ export const sendMessage = async ({
     }
 
     const res = await api.post(
-      "http://localhost:3200/message",
+      "/message",
       formData,
       {
         headers: {
@@ -86,7 +86,7 @@ export const fetchContact = async (
   try {
 
     const res = await api.get(
-      "http://localhost:3200/users"
+      "/users"
     );
 
     const users = res.data.filter(
@@ -101,7 +101,7 @@ export const fetchContact = async (
         try {
 
           const convRes = await api.get(
-            `http://localhost:3200/message/conversation?user1Id=${userId}&user2Id=${u.id}`
+            `/message/conversation?user1Id=${userId}&user2Id=${u.id}`
           );
 
           const last =
@@ -169,7 +169,7 @@ export const deleteMessage = async (
 ) => {
   try {
     const res = await api.delete(
-      `http://localhost:3200/message/${messageId}`
+      `/message/${messageId}`
     );
 
     return res.data;
