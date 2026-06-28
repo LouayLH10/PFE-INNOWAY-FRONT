@@ -15,50 +15,42 @@ import { usePathname } from "next/navigation";
 import { getUserFromToken } from "../auth/pages/login/user";
 
 function NavBar() {
-
-  const pathname =
-    usePathname();
+  const pathname = usePathname();
 
   const [pageName, setPageName] =
     useState("");
-const user=getUserFromToken();
-  const menuItems = [
 
+  const user = getUserFromToken();
+
+  const menuItems = [
     {
       name: "Dashboard",
       path: "/features/dashboard/pages",
     },
-
     {
       name: "Quotes",
       path: "/features/quotes/pages",
     },
-
     {
       name: "Delivery Notes",
       path: "/features/delivery-note/pages",
     },
-
     {
       name: "Purchase Order",
       path: "/features/purchase-order/pages",
     },
-
     {
       name: "Invoices",
       path: "/features/invoice/pages",
     },
-
     {
       name: "Payments",
       path: "/features/payment/pages",
     },
-
     {
       name: "Projects",
       path: "/features/projects/pages",
     },
-
     {
       name: "Messages",
       path: "/features/messages/pages",
@@ -66,7 +58,6 @@ const user=getUserFromToken();
   ];
 
   useEffect(() => {
-
     const currentItem =
       menuItems.find(
         (item) =>
@@ -74,20 +65,16 @@ const user=getUserFromToken();
       );
 
     if (currentItem) {
-
-      setPageName(
-        currentItem.name
-      );
-
+      setPageName(currentItem.name);
     }
-
   }, [pathname]);
+
   const getColorFromName = (
     name: string
   ) => {
-      if (!name) {
-    return "bg-gray-500";
-  }
+    if (!name)
+      return "bg-gray-500";
+
     const colors = [
       "bg-red-500",
       "bg-blue-500",
@@ -106,30 +93,30 @@ const user=getUserFromToken();
         ((hash << 5) - hash);
     }
 
-    return (
-      colors[Math.abs(hash) % colors.length]
-    );
+    return colors[
+      Math.abs(hash) % colors.length
+    ];
   };
+
   return (
+    <nav className="w-full bg-white rounded-2xl md:rounded-[30px] shadow-xl border border-gray-100 px-4 md:px-8 py-4 md:py-5">
 
-    <nav className="w-full bg-white rounded-[30px] shadow-xl border border-gray-100 px-8 py-5">
-
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
 
         {/* LEFT */}
-        <div>
+        <div className="min-w-0">
 
-          <p className="text-sm text-gray-400 font-medium">
-            Welcome Back 
+          <p className="text-xs md:text-sm text-gray-400 font-medium">
+            Welcome Back
           </p>
 
-          <h1 className="text-3xl font-bold text-gray-900 mt-1">
+          <h1 className="text-xl md:text-3xl font-bold text-gray-900 truncate">
             {pageName}
           </h1>
 
         </div>
 
-        {/* CENTER SEARCH */}
+        {/* SEARCH */}
         <div className="hidden lg:flex items-center bg-[#f5f5f7] rounded-2xl px-4 py-3 w-[350px]">
 
           <Search
@@ -145,56 +132,66 @@ const user=getUserFromToken();
 
         </div>
 
-        {/* RIGHT ACTIONS */}
-        <div className="flex items-center gap-4">
+        {/* RIGHT */}
+        <div className="flex items-center gap-2 md:gap-4">
 
           {/* MESSAGE */}
+
           <a
             href="/features/messages/pages"
-            className="relative w-14 h-14 rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition-all duration-300"
+            className="relative w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition"
           >
 
-            <MessageCircle size={22} />
+            <MessageCircle
+              size={18}
+              className="md:w-[22px] md:h-[22px]"
+            />
 
-            {/* BADGE */}
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-[#6C4DFF]" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#6C4DFF]" />
 
           </a>
 
           {/* NOTIFICATION */}
-          <button
-            className="relative w-14 h-14 rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition-all duration-300"
-          >
 
-            <Bell size={22} />
+          <button className="relative w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition">
 
-            {/* BADGE */}
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-pink-500" />
+            <Bell
+              size={18}
+              className="md:w-[22px] md:h-[22px]"
+            />
+
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500" />
 
           </button>
 
           {/* USER */}
-          <div className="flex items-center gap-3 pl-2">
 
-            <div className="text-right hidden sm:block">
+          <div className="flex items-center gap-2 md:gap-3">
 
-              <p className="font-semibold text-gray-800 leading-none">
+            <div className="hidden md:block text-right">
+
+              <p className="font-semibold text-gray-800">
                 {user?.name}
               </p>
 
-
-
             </div>
 
-            {/* AVATAR */}
-            <div className={`w-14 h-14 rounded-2xl bg-[#6C4DFF] text-white ${getColorFromName(user?.name ?? "")} flex items-center justify-center font-bold text-lg shadow-md `}>
-
-           {user?.name.charAt(0).toUpperCase()}
-
+            <div
+              className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl ${getColorFromName(
+                user?.name ?? ""
+              )} flex items-center justify-center text-white font-bold text-base md:text-lg shadow-md`}
+            >
+              {user?.name
+                ?.charAt(0)
+                .toUpperCase()}
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </nav>
   );
 }

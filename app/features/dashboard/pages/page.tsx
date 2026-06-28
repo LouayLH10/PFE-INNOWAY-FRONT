@@ -252,19 +252,18 @@ console.log(due)
   return (
 <div
   ref={dashboardRef}
-  className={`flex flex-col gap-6 ${
+  className={`flex flex-col gap-4 md:gap-6 ${
     isPdfMode
       ? "w-[1200px] bg-white"
-      : ""
+      : "w-full"
   }`}
 >
 
   {/* HEADER */}
-  <div className="flex justify-between items-center">
-
+<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
-      <h1 className="text-3xl font-bold text-gray-800">
-        Dashboard
+<h1 className="text-2xl md:text-3xl font-bold">
+          Dashboard
        
       </h1>
 
@@ -272,8 +271,8 @@ console.log(due)
         Overview of your business metrics
       </p>
     </div>
-    <div className='flex flex-col xl:flex-row gap-6'>
-{!isPdfMode && (
+<div className="flex flex-row flex-wrap gap-3">
+  {!isPdfMode && (
  <select
   value={selectedYear}
   onChange={(e) =>
@@ -315,13 +314,13 @@ console.log(due)
   {/* KPI SECTION */}
  <div
   className={
-    isPdfMode
-      ? "grid grid-cols-3 gap-5"
-      : "flex gap-6 overflow-x-auto pb-2 scrollbar-hide"
+isPdfMode
+? "grid grid-cols-3 gap-5"
+: "grid grid-cols-1 sm:grid-cols-2 xl:flex gap-6 overflow-x-auto pb-2 scrollbar-hide"
   }
 >
 
-    <div className="min-w-[260px] flex-shrink-0">
+  <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Projects"
         number={nbProject}
@@ -337,7 +336,7 @@ console.log(due)
       />
     </div>
 
-    <div className="min-w-[260px] flex-shrink-0">
+   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Quotes"
         number={nbQuote}
@@ -353,7 +352,7 @@ console.log(due)
       />
     </div>
 
-    <div className="min-w-[260px] flex-shrink-0">
+    <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Orders"
         number={nbOrder}
@@ -369,7 +368,7 @@ console.log(due)
       />
     </div>
 
-    <div className="min-w-[260px] flex-shrink-0">
+   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Qty Delivered / Ordered"
         number={`${nbDn} / ${nbOrder}`}
@@ -385,7 +384,7 @@ console.log(due)
       />
     </div>
 
-    <div className="min-w-[260px] flex-shrink-0">
+<div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Invoice Paid / Total"
         number={`${nbPyament} / ${nbInvoice}`}
@@ -401,7 +400,7 @@ console.log(due)
       />
     </div>
 
-    <div className="min-w-[260px] flex-shrink-0">
+   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Amount Paid"
         number={`${amount} TND`}
@@ -415,7 +414,7 @@ console.log(due)
         color="bg-emerald-100"
       />
     </div>
-   <div className="min-w-[260px] flex-shrink-0">
+   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
         title="Due Balance"
         number={`${balance} TND`}
@@ -468,12 +467,12 @@ console.log(due)
     </div>
   </>
 ) : (
-  <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {/* LEFT SIDE */}
     <div className="xl:col-span-2 space-y-6">
 
-      <div className="flex flex-col xl:flex-row gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
         <div className="flex-1">
           <InvoiceStatusChart
@@ -506,7 +505,7 @@ console.log(due)
     {/* RIGHT SIDE */}
     <div className="space-y-6">
 
-      <div className="overflow-y-auto h-137 bg-white rounded-3xl shadow-sm border border-gray-100">
+      <div className="overflow-y-auto h-[350px] lg:h-[540px] bg-white rounded-3xl shadow-sm border border-gray-100">
         <UpcomingActivity />
       </div>
 
@@ -518,7 +517,7 @@ console.log(due)
 )}
 {openShareModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-xl">
+    <div className="w-full max-w-md w-[95%] bg-white rounded-3xl p-6 shadow-xl">
 
       <h2 className="text-xl font-bold text-gray-800 mb-2">
         Share Dashboard Report
