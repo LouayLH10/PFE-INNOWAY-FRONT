@@ -158,116 +158,163 @@ const filteredPayment = payment.filter((d) =>
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && (
-<div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
-  <table className="min-w-full text-sm text-gray-700">
+{!loading && !error && (
+  <>
+    {/* ================= DESKTOP ================= */}
+    <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
+      <table className="min-w-full text-sm text-gray-700">
 
-    {/* HEADER */}
-    <thead className="bg-gray-50 border-b border-gray-200">
-      <tr className="text-gray-500 text-xs uppercase tracking-wider">
+        <thead className="bg-gray-50 border-b border-gray-200">
+          <tr className="text-gray-500 text-xs uppercase tracking-wider">
+            <th className="px-6 py-5 text-left">Reference</th>
+            <th className="px-6 py-5 text-left">Amount</th>
+            <th className="px-6 py-5 text-left">Invoice</th>
+            <th className="px-6 py-5 text-left">Payment Date</th>
+            <th className="px-6 py-5 text-left">Status</th>
+            <th className="px-6 py-5 text-left">Action</th>
+          </tr>
+        </thead>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Reference
-        </th>
+        <tbody>
+          {filteredPayment.length === 0 ? (
+            <tr>
+              <td
+                colSpan={6}
+                className="text-center py-10 text-gray-400"
+              >
+                No results found
+              </td>
+            </tr>
+          ) : (
+            filteredPayment.map((d, index) => {
+              const statusObj = Status(d.status);
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Amount
-        </th>
+              return (
+                <tr
+                  key={d.id}
+                  className={`border-b border-gray-100 hover:bg-gray-50 ${
+                    index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50/40"
+                  }`}
+                >
+                  <td className="px-6 py-5 font-semibold">
+                    PAY-{d.id}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Invoice
-        </th>
+                  <td className="px-6 py-5 font-bold">
+                    {d.amount}{" "}
+                    {d.invoice?.currency || "TND"}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Payment Date
-        </th>
+                  <td className="px-6 py-5">
+                    {d.invoice?.reference || "-"}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Status
-        </th>
+                  <td className="px-6 py-5">
+                    {formatDate(d.paymentDate)}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Action
-        </th>
-      </tr>
-    </thead>
+                  <td className="px-6 py-5">
+                    <span
+                      className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+                    >
+                      {statusObj.state}
+                    </span>
+                  </td>
 
-    {/* BODY */}
-    <tbody>
+                  <td className="px-6 py-5">
+                    <button
+                      onClick={() =>
+                        downloadPayment(d.id)
+                      }
+                      className="px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      Download
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+
+      </table>
+    </div>
+
+    {/* ================= MOBILE ================= */}
+    <div className="lg:hidden space-y-4">
+
       {filteredPayment.length === 0 ? (
-        <tr>
-          <td
-            colSpan={6}
-            className="text-center py-10 text-gray-400"
-          >
-            No results found
-          </td>
-        </tr>
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 text-center text-gray-400">
+          No results found
+        </div>
       ) : (
-        filteredPayment.map((d, index) => {
+        filteredPayment.map((d) => {
           const statusObj = Status(d.status);
 
           return (
-            <tr
+            <div
               key={d.id}
-              className={`border-b border-gray-100 transition hover:bg-gray-50 ${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50/40"
-              }`}
+              className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5"
             >
-              {/* Reference */}
-              <td className="px-6 py-5 font-semibold text-gray-800">
-                PAY-{d.id}
-              </td>
+              <div className="flex justify-between items-center">
 
-              {/* Amount */}
-              <td className="px-6 py-5">
-                <div className="font-bold text-gray-900">
-                  {d.amount} {d.invoice?.currency || "TND"}
-                </div>
-              </td>
+                <h3 className="font-bold text-lg">
+                  PAY-{d.id}
+                </h3>
 
-              {/* Invoice */}
-              <td className="px-6 py-5">
-                <span className="font-medium text-gray-700">
-                  {d.invoice?.reference || "-"}
-                </span>
-              </td>
-
-              {/* Payment Date */}
-              <td className="px-6 py-5">
-                <div className="flex flex-col">
-                  <span className="font-medium">
-                    {formatDate(d.paymentDate)}
-                  </span>
-                </div>
-              </td>
-
-              {/* Status */}
-              <td className="px-6 py-5">
-                <div
-                  className={`${statusObj.style} inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold`}
+                <span
+                  className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
                 >
                   {statusObj.state}
-                </div>
-              </td>
+                </span>
 
-              {/* Action */}
-              <td className="px-6 py-5">
-                <button
-                  onClick={() => downloadPayment(d.id)}
-                  className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 shadow-sm transition"
-                >
-                  Download
-                </button>
-              </td>
-            </tr>
+              </div>
+
+              <div className="mt-4 space-y-2 text-sm">
+
+                <p>
+                  <span className="font-semibold">
+                    Amount:
+                  </span>{" "}
+                  {d.amount}{" "}
+                  {d.invoice?.currency || "TND"}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Invoice:
+                  </span>{" "}
+                  {d.invoice?.reference || "-"}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Payment Date:
+                  </span>{" "}
+                  {formatDate(d.paymentDate)}
+                </p>
+
+              </div>
+
+              <button
+                onClick={() =>
+                  downloadPayment(d.id)
+                }
+                className="w-full mt-5 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-semibold transition"
+              >
+                Download
+              </button>
+
+            </div>
           );
         })
       )}
-    </tbody>
-  </table>
-</div>
-      )}
+
+    </div>
+  </>
+)}
     </div>
   );
 }

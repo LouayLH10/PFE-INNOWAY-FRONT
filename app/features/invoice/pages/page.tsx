@@ -133,160 +133,234 @@ function Page() {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && (
-  <div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-200">
+{!loading && !error && (
+  <>
+    {/* ================= DESKTOP ================= */}
+    <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-200">
+      <table className="min-w-full text-sm text-gray-700">
 
-  <table className="min-w-full text-sm text-gray-700">
-    
-    {/* HEADER */}
-    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-      <tr>
-        <th className="px-6 py-5 text-left font-semibold">Reference</th>
-        <th className="px-6 py-5 text-left font-semibold">Email</th>
-        <th className="px-6 py-5 text-left font-semibold">Website</th>
-        <th className="px-6 py-5 text-left font-semibold">Description</th>
-        <th className="px-6 py-5 text-left font-semibold">Amount</th>
-        <th className="px-6 py-5 text-left font-semibold">TVA</th>
-        <th className="px-6 py-5 text-left font-semibold">Total</th>
-        <th className="px-6 py-5 text-left font-semibold">Status</th>
-        <th className="px-6 py-5 text-left font-semibold">Created At</th>
-        <th className="px-6 py-5 text-left font-semibold">Action</th>
-      </tr>
-    </thead>
+        <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+          <tr>
+            <th className="px-6 py-5 text-left">Reference</th>
+            <th className="px-6 py-5 text-left">Email</th>
+            <th className="px-6 py-5 text-left">Website</th>
+            <th className="px-6 py-5 text-left">Description</th>
+            <th className="px-6 py-5 text-left">Amount</th>
+            <th className="px-6 py-5 text-left">TVA</th>
+            <th className="px-6 py-5 text-left">Total</th>
+            <th className="px-6 py-5 text-left">Status</th>
+            <th className="px-6 py-5 text-left">Created At</th>
+            <th className="px-6 py-5 text-left">Action</th>
+          </tr>
+        </thead>
 
-    {/* BODY */}
-    <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-100">
+          {filteredInvoice.length === 0 ? (
+            <tr>
+              <td
+                colSpan={10}
+                className="text-center py-10 text-gray-400"
+              >
+                No results found
+              </td>
+            </tr>
+          ) : (
+            filteredInvoice.map((d, index) => {
+              const statusObj = Status(d.status);
+
+              return (
+                <tr
+                  key={d.id}
+                  className={`transition hover:bg-gray-50 ${
+                    index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50/50"
+                  }`}
+                >
+                  <td className="px-6 py-5 font-semibold">
+                    {d.reference}
+                  </td>
+
+                  <td className="px-6 py-5">
+                    {d.contact?.user?.email}
+                  </td>
+
+                  <td className="px-6 py-5">
+                    <a
+                      href={d.webSite}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Visit
+                    </a>
+                  </td>
+
+                  <td className="px-6 py-5">
+                    {d.name}
+                  </td>
+
+                  <td className="px-6 py-5">
+                    {d.subTotal} TND
+                  </td>
+
+                  <td className="px-6 py-5">
+                    {d.tva * 100}%
+                  </td>
+
+                  <td className="px-6 py-5 font-bold">
+                    {d.total} TND
+                  </td>
+
+                  <td className="px-6 py-5">
+                    <span
+                      className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+                    >
+                      {statusObj.state}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-5">
+                    {formatDate(d.createdAt)}
+                  </td>
+
+                  <td className="px-6 py-5">
+                    <button
+                      disabled={
+                        d.status !== "SENT" &&
+                        d.status !== "PAID"
+                      }
+                      onClick={() =>
+                        downloadInvoice(d.id)
+                      }
+                      className={`px-5 py-2 rounded-xl text-white ${
+                        d.status === "SENT" ||
+                        d.status === "PAID"
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-gray-300 cursor-not-allowed"
+                      }`}
+                    >
+                      Download
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+
+      </table>
+    </div>
+
+    {/* ================= MOBILE ================= */}
+    <div className="lg:hidden space-y-4">
 
       {filteredInvoice.length === 0 ? (
-        <tr>
-          <td
-            colSpan={10}
-            className="text-center py-10 text-gray-400"
-          >
-            No results found
-          </td>
-        </tr>
+        <div className="bg-white rounded-3xl p-6 text-center text-gray-400 shadow-sm">
+          No results found
+        </div>
       ) : (
-        filteredInvoice.map((d, index) => {
+        filteredInvoice.map((d) => {
           const statusObj = Status(d.status);
 
           return (
-            <tr
+            <div
               key={d.id}
-              className={`transition hover:bg-gray-50 ${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
-              }`}
+              className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
             >
-              {/* REFERENCE */}
-              <td className="px-6 py-5 font-semibold text-gray-900">
-                {d.reference}
-              </td>
+              <div className="flex justify-between items-center">
 
-              {/* EMAIL */}
-              <td className="px-6 py-5">
-                <div className="flex flex-col">
-                  <span className="font-medium">
-                    {d.contact?.user?.email}
-                  </span>
+                <h3 className="font-bold text-lg">
+                  {d.reference}
+                </h3>
 
-                  <span className="text-xs text-gray-400">
-                    Client Email
-                  </span>
-                </div>
-              </td>
-
-              {/* WEBSITE */}
-              <td className="px-6 py-5">
-                <a
-                  href={d.webSite}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 font-medium hover:underline"
-                >
-                  Visit
-                </a>
-              </td>
-
-              {/* DESCRIPTION */}
-              <td className="px-6 py-5">
-                <div className="max-w-[250px]">
-                  <p className="font-medium text-gray-800">
-                    {d.name}
-                  </p>
-
-                  <p className="text-xs text-gray-400 mt-1">
-                    Invoice Description
-                  </p>
-                </div>
-              </td>
-
-              {/* AMOUNT */}
-              <td className="px-6 py-5 font-medium">
-                {d.subTotal} TND
-              </td>
-
-              {/* TVA */}
-              <td className="px-6 py-5">
-                <span className="font-semibold">
-                  {d.tva * 100}%
-                </span>
-              </td>
-
-              {/* TOTAL */}
-              <td className="px-6 py-5">
-                <span className="font-bold text-gray-900">
-                  {d.total} TND
-                </span>
-              </td>
-
-              {/* STATUS */}
-              <td className="px-6 py-5">
-                <div
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusObj.style}`}
+                <span
+                  className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
                 >
                   {statusObj.state}
-                </div>
-              </td>
+                </span>
 
-              {/* DATE */}
-              <td className="px-6 py-5">
-                <div className="flex flex-col">
-                  <span className="font-medium">
-                    {formatDate(d.createdAt)}
-                  </span>
+              </div>
 
-                  <span className="text-xs text-gray-400">
-                    Created Date
-                  </span>
-                </div>
-              </td>
+              <div className="mt-4 space-y-2 text-sm">
 
-              {/* ACTION */}
-              <td className="px-6 py-5">
-                <button
-                  disabled={
-                    d.status !== "SENT" &&
-                    d.status !== "PAID"
-                  }
-                  onClick={() => downloadInvoice(d.id)}
-                  className={`px-5 py-2 rounded-xl text-sm font-medium text-white transition ${
-                    d.status === "SENT" ||
-                    d.status === "PAID"
-                      ? "bg-green-600 hover:bg-green-700 shadow-sm"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
-                >
-                  Download
-                </button>
-              </td>
-            </tr>
+                <p>
+                  <span className="font-semibold">
+                    Email:
+                  </span>{" "}
+                  {d.contact?.user?.email}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Website:
+                  </span>{" "}
+                  <a
+                    href={d.webSite}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    Visit
+                  </a>
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Description:
+                  </span>{" "}
+                  {d.name}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Amount:
+                  </span>{" "}
+                  {d.subTotal} TND
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    TVA:
+                  </span>{" "}
+                  {d.tva * 100}%
+                </p>
+
+                <p className="text-lg font-bold text-[#6C4DFF]">
+                  {d.total} TND
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  {formatDate(d.createdAt)}
+                </p>
+
+              </div>
+
+              <button
+                disabled={
+                  d.status !== "SENT" &&
+                  d.status !== "PAID"
+                }
+                onClick={() =>
+                  downloadInvoice(d.id)
+                }
+                className={`w-full mt-5 py-3 rounded-2xl text-white font-semibold ${
+                  d.status === "SENT" ||
+                  d.status === "PAID"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
+              >
+                Download
+              </button>
+            </div>
           );
         })
       )}
-    </tbody>
-  </table>
-</div>
-      )}
+
+    </div>
+  </>
+)}
     </div>
   );
 }

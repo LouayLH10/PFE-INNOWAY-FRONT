@@ -120,186 +120,346 @@ const filteredQuote = quote.filter((d) =>
 
   if (!isAuthChecked) return null;
 
-  return (
-    <div className="p-6 mt-5">
+return (
+  <div className="p-3 sm:p-6 mt-2 sm:mt-5">
 
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        placeholder="Search quote..."
-      />
+    <SearchBar
+      value={query}
+      onChange={setQuery}
+      placeholder="Search quote..."
+    />
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+    {loading && (
+      <p className="mt-5">Loading...</p>
+    )}
 
-      {!loading && !error && (
-<div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
-  <table className="min-w-full text-sm text-gray-700">
-    
-    {/* HEADER */}
-    <thead className="bg-gray-50 border-b border-gray-200">
-      <tr className="text-gray-500 text-xs uppercase tracking-wider">
+    {error && (
+      <p className="mt-5 text-red-500">{error}</p>
+    )}
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Reference
-        </th>
+    {!loading && !error && (
+      <>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Email
-        </th>
+        {/* ========================= */}
+        {/* DESKTOP TABLE */}
+        {/* ========================= */}
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Website
-        </th>
+        <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100 mt-5">
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Description
-        </th>
+          <table className="min-w-full text-sm text-gray-700">
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Amount
-        </th>
+            <thead className="bg-gray-50 border-b border-gray-200">
 
-        <th className="px-6 py-5 text-left font-semibold">
-          TVA
-        </th>
+              <tr className="text-gray-500 text-xs uppercase">
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Total
-        </th>
+                <th className="px-6 py-5 text-left">
+                  Reference
+                </th>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Status
-        </th>
+                <th className="px-6 py-5 text-left">
+                  Email
+                </th>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Created At
-        </th>
+                <th className="px-6 py-5 text-left">
+                  Website
+                </th>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Action
-        </th>
-      </tr>
-    </thead>
+                <th className="px-6 py-5 text-left">
+                  Description
+                </th>
 
-    {/* BODY */}
-    <tbody>
-      {filteredQuote.length === 0 ? (
-        <tr>
-          <td
-            colSpan={10}
-            className="text-center py-10 text-gray-400"
-          >
-            No results found
-          </td>
-        </tr>
-      ) : (
-        filteredQuote.map((d, index) => {
-          const statusObj = Status(d.status);
+                <th className="px-6 py-5 text-left">
+                  Amount
+                </th>
 
-          return (
-            <tr
-              key={d.id}
-              className={`border-b border-gray-100 transition hover:bg-gray-50 ${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50/40"
-              }`}
-            >
-              {/* Reference */}
-              <td className="px-6 py-5 font-semibold text-gray-800">
-                {d.reference}
-              </td>
+                <th className="px-6 py-5 text-left">
+                  TVA
+                </th>
 
-              {/* Email */}
-              <td className="px-6 py-5">
-                <div className="flex flex-col">
-                  <span className="font-medium">
-                    {d.contact?.user?.email || d.email}
-                  </span>
-                </div>
-              </td>
+                <th className="px-6 py-5 text-left">
+                  Total
+                </th>
 
-              {/* Website */}
-              <td className="px-6 py-5">
-                {d.webSite ? (
-                  <a
-                    href={d.webSite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 font-medium hover:underline"
+                <th className="px-6 py-5 text-left">
+                  Status
+                </th>
+
+                <th className="px-6 py-5 text-left">
+                  Created
+                </th>
+
+                <th className="px-6 py-5 text-left">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {filteredQuote.length === 0 ? (
+
+                <tr>
+
+                  <td
+                    colSpan={10}
+                    className="text-center py-10"
                   >
-                    Visit
-                  </a>
-                ) : (
-                  <span className="text-gray-400">-</span>
-                )}
-              </td>
+                    No results found
+                  </td>
 
-              {/* Description */}
-              <td className="px-6 py-5 max-w-[250px]">
-                <div className="font-medium text-gray-800">
-                  {d.subject}
-                </div>
-              </td>
+                </tr>
 
-              {/* Amount */}
-              <td className="px-6 py-5 font-medium">
-                {d.amount} TND
-              </td>
+              ) : (
 
-              {/* TVA */}
-              <td className="px-6 py-5">
-                <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
-                  {d.tva}%
-                </span>
-              </td>
+                filteredQuote.map((d, index) => {
 
-              {/* Total */}
-              <td className="px-6 py-5 font-bold text-gray-900">
-                {d.totalAmount} TND
-              </td>
+                  const statusObj = Status(d.status);
 
-              {/* Status */}
-              <td className="px-6 py-5">
+                  return (
+
+                    <tr
+                      key={d.id}
+                      className={`border-b border-gray-100 hover:bg-gray-50 ${
+                        index % 2 === 0
+                          ? "bg-white"
+                          : "bg-gray-50/40"
+                      }`}
+                    >
+
+                      <td className="px-6 py-5 font-semibold">
+                        {d.reference}
+                      </td>
+
+                      <td className="px-6 py-5">
+                        {d.contact?.user?.email || d.email}
+                      </td>
+
+                      <td className="px-6 py-5">
+
+                        {d.webSite ? (
+
+                          <a
+                            href={d.webSite}
+                            target="_blank"
+                            className="text-blue-600 hover:underline"
+                          >
+                            Visit
+                          </a>
+
+                        ) : (
+                          "-"
+                        )}
+
+                      </td>
+
+                      <td className="px-6 py-5">
+                        {d.subject}
+                      </td>
+
+                      <td className="px-6 py-5">
+                        {d.amount} TND
+                      </td>
+
+                      <td className="px-6 py-5">
+                        {d.tva}%
+                      </td>
+
+                      <td className="px-6 py-5 font-bold">
+                        {d.totalAmount} TND
+                      </td>
+
+                      <td className="px-6 py-5">
+
+                        <span
+                          className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+                        >
+                          {statusObj.state}
+                        </span>
+
+                      </td>
+
+                      <td className="px-6 py-5">
+                        {formatDate(d.createdAt)}
+                      </td>
+
+                      <td className="px-6 py-5">
+
+                        <button
+                          disabled={d.status !== "READY"}
+                          onClick={() =>
+                            downloadQuote(d.id)
+                          }
+                          className={`px-4 py-2 rounded-xl text-white ${
+                            d.status === "READY"
+                              ? "bg-green-600 hover:bg-green-700"
+                              : "bg-gray-300"
+                          }`}
+                        >
+                          Download
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  );
+
+                })
+
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        {/* ========================= */}
+        {/* MOBILE CARDS */}
+        {/* ========================= */}
+
+        <div className="lg:hidden mt-5 space-y-4">
+
+          {filteredQuote.length === 0 ? (
+
+            <div className="bg-white rounded-3xl p-6 text-center">
+
+              No results found
+
+            </div>
+
+          ) : (
+
+            filteredQuote.map((d) => {
+
+              const statusObj = Status(d.status);
+
+              return (
+
                 <div
-                  className={`${statusObj.style} inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold`}
+                  key={d.id}
+                  className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5"
                 >
-                  {statusObj.state}
-                </div>
-              </td>
 
-              {/* Created */}
-              <td className="px-6 py-5">
-                <div className="flex flex-col">
-                  <span className="font-medium">
-                    {formatDate(d.createdAt)}
-                  </span>
-                </div>
-              </td>
+                  <div className="flex justify-between items-start">
 
-              {/* Action */}
-              <td className="px-6 py-5">
-                <button
-                  disabled={d.status !== "READY"}
-                  onClick={() => downloadQuote(d.id)}
-                  className={`px-5 py-2 rounded-xl text-sm font-semibold text-white transition ${
-                    d.status === "READY"
-                      ? "bg-green-600 hover:bg-green-700 shadow-sm"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
-                >
-                  Download
-                </button>
-              </td>
-            </tr>
-          );
-        })
-      )}
-    </tbody>
-  </table>
-</div>
-      )}
-    </div>
-  );
+                    <div>
+
+                      <h2 className="font-bold text-lg">
+                        {d.reference}
+                      </h2>
+
+                      <p className="text-sm text-gray-500">
+                        {formatDate(d.createdAt)}
+                      </p>
+
+                    </div>
+
+                    <span
+                      className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+                    >
+                      {statusObj.state}
+                    </span>
+
+                  </div>
+
+                  <div className="mt-4 space-y-2 text-sm">
+
+                    <p>
+
+                      <span className="font-semibold">
+                        Email :
+                      </span>{" "}
+
+                      {d.contact?.user?.email || d.email}
+
+                    </p>
+
+                    <p>
+
+                      <span className="font-semibold">
+                        Description :
+                      </span>{" "}
+
+                      {d.subject}
+
+                    </p>
+
+                    <p>
+
+                      <span className="font-semibold">
+                        Amount :
+                      </span>{" "}
+
+                      {d.amount} TND
+
+                    </p>
+
+                    <p>
+
+                      <span className="font-semibold">
+                        TVA :
+                      </span>{" "}
+
+                      {d.tva}%
+
+                    </p>
+
+                    <p>
+
+                      <span className="font-semibold">
+                        Total :
+                      </span>{" "}
+
+                      {d.totalAmount} TND
+
+                    </p>
+
+                    {d.webSite && (
+
+                      <a
+                        href={d.webSite}
+                        target="_blank"
+                        className="text-blue-600 underline"
+                      >
+                        Visit Website
+                      </a>
+
+                    )}
+
+                  </div>
+
+                  <button
+                    disabled={d.status !== "READY"}
+                    onClick={() =>
+                      downloadQuote(d.id)
+                    }
+                    className={`mt-5 w-full py-3 rounded-xl text-white font-semibold ${
+                      d.status === "READY"
+                        ? "bg-green-600"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    Download
+                  </button>
+
+                </div>
+
+              );
+
+            })
+
+          )}
+
+        </div>
+
+      </>
+    )}
+
+  </div>
+);
 }
 
 export default Page;

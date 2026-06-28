@@ -136,172 +136,226 @@ const Status = (status: string) => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && (
-<div className="overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
-  <table className="min-w-full text-sm text-gray-700">
+{!loading && !error && (
+  <>
+    {/* ================= DESKTOP ================= */}
+    <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
+      <table className="min-w-full text-sm text-gray-700">
+        <thead className="bg-gray-50 border-b border-gray-200">
+          <tr className="text-gray-500 text-xs uppercase tracking-wider">
+            <th className="px-6 py-5 text-left">Reference</th>
+            <th className="px-6 py-5 text-left">Supplier</th>
+            <th className="px-6 py-5 text-left">Email</th>
+            <th className="px-6 py-5 text-left">Phone</th>
+            <th className="px-6 py-5 text-left">Order Date</th>
+            <th className="px-6 py-5 text-left">Delivery Date</th>
+            <th className="px-6 py-5 text-left">Subtotal</th>
+            <th className="px-6 py-5 text-left">Tax</th>
+            <th className="px-6 py-5 text-left">Total</th>
+            <th className="px-6 py-5 text-left">Status</th>
+            <th className="px-6 py-5 text-left">Created</th>
+            <th className="px-6 py-5 text-left">Action</th>
+          </tr>
+        </thead>
 
-    {/* HEADER */}
-    <thead className="bg-gray-50 border-b border-gray-200">
-      <tr className="text-gray-500 text-xs uppercase tracking-wider">
+        <tbody>
+          {filteredPO.length === 0 ? (
+            <tr>
+              <td
+                colSpan={12}
+                className="text-center py-10 text-gray-400"
+              >
+                No results found
+              </td>
+            </tr>
+          ) : (
+            filteredPO.map((po, index) => {
+              const statusObj = Status(po.status);
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Reference
-        </th>
+              return (
+                <tr
+                  key={po.id}
+                  className={`border-b border-gray-100 hover:bg-gray-50 ${
+                    index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50/40"
+                  }`}
+                >
+                  <td className="px-6 py-5 font-semibold">
+                    {po.reference}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Supplier
-        </th>
+                  <td className="px-6 py-5">
+                    {po.supplierName}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Email
-        </th>
+                  <td className="px-6 py-5">
+                    {po.supplierEmail}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Phone
-        </th>
+                  <td className="px-6 py-5">
+                    {po.supplierPhone}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Order Date
-        </th>
+                  <td className="px-6 py-5">
+                    {formatDate(po.orderDate)}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Delivery Date
-        </th>
+                  <td className="px-6 py-5">
+                    {po.deliveryDate
+                      ? formatDate(po.deliveryDate)
+                      : "-"}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Subtotal
-        </th>
+                  <td className="px-6 py-5">
+                    {po.subTotal} TND
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Tax
-        </th>
+                  <td className="px-6 py-5">
+                    {po.tax} TND
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Total
-        </th>
+                  <td className="px-6 py-5 font-bold">
+                    {po.total} TND
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Status
-        </th>
+                  <td className="px-6 py-5">
+                    <span
+                      className={`${statusObj.style} inline-flex px-3 py-1 rounded-full text-xs font-semibold`}
+                    >
+                      {statusObj.state}
+                    </span>
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Created At
-        </th>
+                  <td className="px-6 py-5">
+                    {formatDate(po.createdAt)}
+                  </td>
 
-        <th className="px-6 py-5 text-left font-semibold">
-          Action
-        </th>
-      </tr>
-    </thead>
+                  <td className="px-6 py-5">
+                    <button
+                      onClick={() =>
+                        downloadPO(po.id)
+                      }
+                      className="px-5 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700"
+                    >
+                      Download
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+    </div>
 
-    {/* BODY */}
-    <tbody>
+    {/* ================= MOBILE ================= */}
+    <div className="lg:hidden space-y-4">
       {filteredPO.length === 0 ? (
-        <tr>
-          <td
-            colSpan={12}
-            className="text-center py-10 text-gray-400"
-          >
-            No results found
-          </td>
-        </tr>
+        <div className="bg-white rounded-3xl p-6 text-center text-gray-400">
+          No results found
+        </div>
       ) : (
-        filteredPO.map((po, index) => {
+        filteredPO.map((po) => {
           const statusObj = Status(po.status);
 
           return (
-            <tr
+            <div
               key={po.id}
-              className={`border-b border-gray-100 transition hover:bg-gray-50 ${
-                index % 2 === 0
-                  ? "bg-white"
-                  : "bg-gray-50/40"
-              }`}
+              className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
             >
+              <div className="flex justify-between items-center">
 
-              {/* Reference */}
-              <td className="px-6 py-5 font-semibold text-gray-800">
-                {po.reference}
-              </td>
+                <h3 className="font-bold text-lg">
+                  {po.reference}
+                </h3>
 
-              {/* Supplier */}
-              <td className="px-6 py-5">
-                <div className="font-medium">
-                  {po.supplierName}
-                </div>
-              </td>
-
-              {/* Email */}
-              <td className="px-6 py-5">
-                <span className="text-gray-700">
-                  {po.supplierEmail}
-                </span>
-              </td>
-
-              {/* Phone */}
-              <td className="px-6 py-5">
-                {po.supplierPhone}
-              </td>
-
-              {/* Order Date */}
-              <td className="px-6 py-5">
-                {formatDate(po.orderDate)}
-              </td>
-
-              {/* Delivery Date */}
-              <td className="px-6 py-5">
-                {po.deliveryDate
-                  ? formatDate(po.deliveryDate)
-                  : "-"}
-              </td>
-
-              {/* Subtotal */}
-              <td className="px-6 py-5">
-                {po.subTotal} TND
-              </td>
-
-              {/* Tax */}
-              <td className="px-6 py-5">
-                {po.tax} TND
-              </td>
-
-              {/* Total */}
-              <td className="px-6 py-5 font-bold text-gray-900">
-                {po.total} TND
-              </td>
-
-              {/* Status */}
-              <td className="px-6 py-5">
-                <div
-                  className={`${statusObj.style} inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold`}
+                <span
+                  className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
                 >
                   {statusObj.state}
-                </div>
-              </td>
+                </span>
 
-              {/* Created At */}
-              <td className="px-6 py-5">
-                {formatDate(po.createdAt)}
-              </td>
+              </div>
 
-              {/* Action */}
-              <td className="px-6 py-5">
-                <button
-                  onClick={() => downloadPO(po.id)}
-                  className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 shadow-sm transition"
-                >
-                  Download
-                </button>
-              </td>
+              <div className="mt-4 space-y-2 text-sm">
 
-            </tr>
+                <p>
+                  <span className="font-semibold">
+                    Supplier:
+                  </span>{" "}
+                  {po.supplierName}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Email:
+                  </span>{" "}
+                  {po.supplierEmail}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Phone:
+                  </span>{" "}
+                  {po.supplierPhone}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Order Date:
+                  </span>{" "}
+                  {formatDate(po.orderDate)}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Delivery:
+                  </span>{" "}
+                  {po.deliveryDate
+                    ? formatDate(po.deliveryDate)
+                    : "-"}
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Subtotal:
+                  </span>{" "}
+                  {po.subTotal} TND
+                </p>
+
+                <p>
+                  <span className="font-semibold">
+                    Tax:
+                  </span>{" "}
+                  {po.tax} TND
+                </p>
+
+                <p className="font-bold text-lg text-[#6C4DFF]">
+                  {po.total} TND
+                </p>
+
+                <p className="text-gray-500 text-xs">
+                  {formatDate(po.createdAt)}
+                </p>
+
+              </div>
+
+              <button
+                onClick={() =>
+                  downloadPO(po.id)
+                }
+                className="w-full mt-5 bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold"
+              >
+                Download
+              </button>
+            </div>
           );
         })
       )}
-    </tbody>
-  </table>
-</div>
-      )}
+    </div>
+  </>
+)}
     </div>
   );
 }

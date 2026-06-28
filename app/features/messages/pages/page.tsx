@@ -53,6 +53,7 @@ function MessagesPage() {
     useState<File | null>(null);
 const [showDeleteModal, setShowDeleteModal] = useState(false);
 const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
+const [showChat, setShowChat] = useState(false);
 const handleDeleteMessage = async () => {
   if (!messageToDelete) return;
 
@@ -341,10 +342,26 @@ useEffect(() => {
   };
 
   return (
-<div className="h-full flex overflow-hidden rounded-[30px] bg-white shadow-xl">
+<div className="h-full flex overflow-hidden rounded-[30px] bg-white shadow-xl relative">
 
   {/* 🔵 SIDEBAR */}
-  <div className="w-[340px] bg-[#fafafa] border-r border-gray-200 flex flex-col">
+  <div
+  className={`
+    bg-[#fafafa]
+    border-r
+    border-gray-200
+    flex
+    flex-col
+    w-full
+    lg:w-[340px]
+
+    ${
+      showChat
+        ? "hidden lg:flex"
+        : "flex"
+    }
+  `}
+>
 
     {/* HEADER */}
     <div className="px-6 pt-6 pb-5">
@@ -410,9 +427,13 @@ useEffect(() => {
           return (
             <div
               key={index}
-              onClick={() =>
-                setSelectedContact(c)
-              }
+onClick={() => {
+  setSelectedContact(c);
+
+  if (window.innerWidth < 1024) {
+    setShowChat(true);
+  }
+}}
               className={`flex items-center gap-4 p-4 rounded-3xl cursor-pointer transition-all duration-300 border ${
                 isSelected
                   ? "bg-[#F3F0FF] border-[#6C4DFF]"
@@ -454,14 +475,32 @@ useEffect(() => {
   </div>
 
   {/* 🟢 CHAT */}
-  <div className="flex-1 flex flex-col bg-[#f5f5f7]">
+  <div
+  className={`
+    flex-1
+    flex
+    flex-col
+    bg-[#f5f5f7]
+
+    ${
+      showChat
+        ? "flex"
+        : "hidden lg:flex"
+    }
+  `}
+>
 
     {selectedContact ? (
       <>
         {/* HEADER */}
         <div className="bg-white px-8 py-5 border-b border-gray-200 flex items-center justify-between">
-
-          <div className="flex items-center gap-4">
+<button
+  onClick={() => setShowChat(false)}
+  className="lg:hidden mr-4 text-2xl"
+>
+  ←
+</button>
+          <div className="flex items-center gap-2 lg:gap-4">
 
             <div
               className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-md ${getColorFromName(
@@ -490,7 +529,7 @@ useEffect(() => {
         </div>
 
         {/* MESSAGES */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
+        <div className="flex-1 overflow-y-auto px-4 lg:px-8 py-4 lg:py-6 space-y-4">
 
           {selectedContact.conversation.map(
             (msg) => {
@@ -524,7 +563,7 @@ useEffect(() => {
 
   {/* Message */}
   <div
-    className={`max-w-[65%] px-5 py-4 rounded-[24px] shadow-sm ${
+    className={`max-w-[85%] lg:max-w-[65%] px-5 py-4 rounded-[24px] shadow-sm ${
       isMine
         ? "bg-[#6C4DFF] text-white rounded-br-md"
         : "bg-white text-gray-800 rounded-bl-md"
@@ -577,7 +616,7 @@ useEffect(() => {
 
         {/* INPUT */}
 {/* INPUT */}
-<div className="bg-white border-t border-gray-200 px-6 py-5">
+<div className="bg-white border-t border-gray-200 px-3 lg:px-6 py-4">
 
   <div
     onDragOver={(e) => e.preventDefault()}
@@ -612,7 +651,7 @@ useEffect(() => {
 
     {/* FILE NAME */}
     {selectedFile && (
-      <div className="text-sm text-[#6C4DFF] font-medium truncate max-w-[150px]">
+      <div className="text-sm text-[#6C4DFF] font-medium truncate hidden lg:block max-w-[150px]">
         {selectedFile.name}
       </div>
     )}
