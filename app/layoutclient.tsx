@@ -186,6 +186,7 @@ export default function LayoutClient({
             border-gray-100
             overflow-y-auto
             overflow-x-hidden
+            text-black-700
             ${
               isDesktop
                 ? "h-[calc(100vh-170px)] p-6"
