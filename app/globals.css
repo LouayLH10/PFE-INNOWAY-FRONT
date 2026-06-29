@@ -3,8 +3,12 @@
 :root {
   --background: #100f0f;
   --foreground: #ececec;
-}
+   color-scheme: light;
 
+}
+html {
+    color-scheme: light;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
