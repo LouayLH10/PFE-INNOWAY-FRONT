@@ -31,7 +31,7 @@ export const downloadPO =async(id:number)=>{
       const link = document.createElement("a");
 
       link.href = url;
-      link.setAttribute("download", `quotes-${id}.pdf`);
+      link.setAttribute("download", `ORDER-${id}.pdf`);
       document.body.appendChild(link);
 
       link.click();
