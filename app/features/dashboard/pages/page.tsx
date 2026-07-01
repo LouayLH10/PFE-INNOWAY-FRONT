@@ -76,17 +76,18 @@ const years = Array.from(
 ).reverse(); // pour afficher la plus récente en premier
 const [openSuccessModal, setOpenSuccessModal] =
   useState(false);
+  const [sending, setSending] = useState(false);
+
+const [openErrorModal, setOpenErrorModal] = useState(false);
+
+const [errorMessage, setErrorMessage] = useState("");
 const [selectedYear, setSelectedYear] =
   useState(currentYear);
 const handleSendEmail = async () => {
-  try {
-    if (!pdfFile) {
-      return;
-    }
+  if (!pdfFile) return;
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 200)
-    );
+  try {
+    setSending(true);
 
     await sendDashboardEmail(
       pdfFile,
@@ -104,8 +105,17 @@ const handleSendEmail = async () => {
     setMessage("");
 
     setOpenSuccessModal(true);
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+
+    setErrorMessage(
+      error?.response?.data?.message ||
+      "Unable to send the dashboard report."
+    );
+
+    setOpenErrorModal(true);
+  } finally {
+    setSending(false);
   }
 };
 useEffect(() => {
@@ -572,13 +582,44 @@ isPdfMode
           Cancel
         </button>
 
-        <button
-         onClick={handleSendEmail}
+<button
+  onClick={handleSendEmail}
+  disabled={sending}
+  className={`px-4 py-2 rounded-xl text-white transition flex items-center justify-center min-w-[110px] ${
+    sending
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#6C4DFF] hover:bg-[#5b3df0]"
+  }`}
+>
+  {sending ? (
+    <div className="flex items-center gap-2">
+      <svg
+        className="w-5 h-5 animate-spin"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="white"
+          strokeWidth="4"
+          opacity="0.25"
+        />
+        <path
+          d="M22 12a10 10 0 00-10-10"
+          stroke="white"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </svg>
 
-          className="px-4 py-2 rounded-xl bg-[#6C4DFF] text-white hover:bg-[#5b3df0]"
-        >
-          Send
-        </button>
+      Sending...
+    </div>
+  ) : (
+    "Send"
+  )}
+</button>
 
       </div>
 
@@ -619,6 +660,45 @@ isPdfMode
           setOpenSuccessModal(false)
         }
         className="w-full py-3 rounded-xl bg-[#6C4DFF] text-white hover:bg-[#5b3df0]"
+      >
+        OK
+      </button>
+
+    </div>
+  </div>
+)}
+{openErrorModal && (
+  <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="bg-white rounded-3xl p-8 shadow-xl max-w-sm w-full text-center">
+
+      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-8 h-8 text-red-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </div>
+
+      <h3 className="text-xl font-bold text-gray-800 mb-2">
+        Failed
+      </h3>
+
+      <p className="text-gray-500 mb-6">
+        {errorMessage}
+      </p>
+
+      <button
+        onClick={() => setOpenErrorModal(false)}
+        className="w-full py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
       >
         OK
       </button>
