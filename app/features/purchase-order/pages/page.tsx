@@ -6,6 +6,8 @@ import { getUserFromToken } from "../../auth/pages/login/user";
 import { useRouter } from "next/navigation";
 import SearchBar from "../../components/searchBar";
 import { downloadPO, fetchPO } from "../service/purchaseOrderService";
+import { formatDate, formatTND } from "../../services/generalFunctions";
+import { useTranslation } from "react-i18next";
 
 type PurchaseOrder = {
   id: number;
@@ -45,16 +47,6 @@ function Page() {
   const router = useRouter();
 
   // ✅ format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
 
   // ✅ filter
 const filteredPO = purchaseOrders.filter((po) =>
@@ -99,26 +91,35 @@ const filteredPO = purchaseOrders.filter((po) =>
 
 
   // ✅ STATUS
+const { t } = useTranslation("order");
+
 const Status = (status: string) => {
   switch (status) {
     case "PENDING":
       return {
-        state: "PENDING",
+        state: t("status.PENDING").toUpperCase(),
         style: "bg-yellow-500 text-white px-2 py-1 rounded",
       };
+
     case "APPROVED":
       return {
-        state: "APPROVED",
+        state: t("status.APPROVED").toUpperCase(),
         style: "bg-blue-500 text-white px-2 py-1 rounded",
       };
+
     case "DELIVERED":
       return {
-        state: "DELIVERED",
+        state: t("status.DELIVERED").toUpperCase(),
+        style: "bg-green-500 text-white px-2 py-1 rounded",
+      };
+    case "RECEIVED":
+      return {
+        state: t("status.RECEIVED").toUpperCase(),
         style: "bg-green-500 text-white px-2 py-1 rounded",
       };
     default:
       return {
-        state: status,
+        state:  t("status.CANCELLED").toUpperCase(),
         style: "bg-gray-400 text-white px-2 py-1 rounded",
       };
   }
@@ -127,46 +128,50 @@ const Status = (status: string) => {
 
   return (
     <div className="p-6 mt-5">
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        placeholder="Search quote..."
-      />
+<SearchBar
+  value={query}
+  onChange={setQuery}
+  placeholder={t("search.placeholder")}
+/>
+{loading && <p>{t("messages.loading")}</p>}
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+{error && (
+  <p className="text-red-500">
+    {t("messages.fetchError")}
+  </p>
+)}
 
 {!loading && !error && (
   <>
     {/* ================= DESKTOP ================= */}
     <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
       <table className="min-w-full text-sm text-gray-700">
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr className="text-gray-500 text-xs uppercase tracking-wider">
-            <th className="px-6 py-5 text-left">Reference</th>
-            <th className="px-6 py-5 text-left">Supplier</th>
-            <th className="px-6 py-5 text-left">Email</th>
-            <th className="px-6 py-5 text-left">Phone</th>
-            <th className="px-6 py-5 text-left">Order Date</th>
-            <th className="px-6 py-5 text-left">Delivery Date</th>
-            <th className="px-6 py-5 text-left">Subtotal</th>
-            <th className="px-6 py-5 text-left">Tax</th>
-            <th className="px-6 py-5 text-left">Total</th>
-            <th className="px-6 py-5 text-left">Status</th>
-            <th className="px-6 py-5 text-left">Created</th>
-            <th className="px-6 py-5 text-left">Action</th>
-          </tr>
-        </thead>
+ <thead className="bg-gray-50 border-b border-gray-200">
+  <tr className="text-gray-500 text-xs uppercase tracking-wider">
+    <th className="px-6 py-5 text-left">{t("table.reference")}</th>
+    <th className="px-6 py-5 text-left">{t("table.supplier")}</th>
+    <th className="px-6 py-5 text-left">{t("table.email")}</th>
+    <th className="px-6 py-5 text-left">{t("table.phone")}</th>
+    <th className="px-6 py-5 text-left">{t("table.orderDate")}</th>
+    <th className="px-6 py-5 text-left">{t("table.deliveryDate")}</th>
+    <th className="px-6 py-5 text-left">{t("table.subtotal")}</th>
+    <th className="px-6 py-5 text-left">{t("table.tax")}</th>
+    <th className="px-6 py-5 text-left">{t("table.total")}</th>
+    <th className="px-6 py-5 text-left">{t("table.status")}</th>
+    <th className="px-6 py-5 text-left">{t("table.created")}</th>
+    <th className="px-6 py-5 text-left">{t("table.action")}</th>
+  </tr>
+</thead>
 
         <tbody>
           {filteredPO.length === 0 ? (
             <tr>
-              <td
-                colSpan={12}
-                className="text-center py-10 text-gray-400"
-              >
-                No results found
-              </td>
+<td
+  colSpan={12}
+  className="text-center py-10 text-gray-400"
+>
+  {t("messages.noResults")}
+</td>
             </tr>
           ) : (
             filteredPO.map((po, index) => {
@@ -181,9 +186,9 @@ const Status = (status: string) => {
                       : "bg-gray-50/40"
                   }`}
                 >
-                  <td className="px-6 py-5 font-semibold">
-                    {po.reference}
-                  </td>
+              <td className="px-6 py-5 font-semibold">
+  {po.reference.replace(/^PO/, "SO")}
+</td>
 
                   <td className="px-6 py-5">
                     {po.supplierName}
@@ -208,15 +213,15 @@ const Status = (status: string) => {
                   </td>
 
                   <td className="px-6 py-5">
-                    {po.subTotal} TND
+                    {formatTND(po.subTotal)} 
                   </td>
 
                   <td className="px-6 py-5">
-                    {po.tax} TND
+                    {formatTND(po.tax)} 
                   </td>
 
                   <td className="px-6 py-5 font-bold">
-                    {po.total} TND
+                    {formatTND(po.total)} 
                   </td>
 
                   <td className="px-6 py-5">
@@ -238,7 +243,7 @@ const Status = (status: string) => {
                       }
                       className="px-5 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700"
                     >
-                      Download
+                     {t("buttons.download")}
                     </button>
                   </td>
                 </tr>
@@ -250,110 +255,107 @@ const Status = (status: string) => {
     </div>
 
     {/* ================= MOBILE ================= */}
-    <div className="lg:hidden space-y-4">
-      {filteredPO.length === 0 ? (
-        <div className="bg-white rounded-3xl p-6 text-center text-gray-400">
-          No results found
-        </div>
-      ) : (
-        filteredPO.map((po) => {
-          const statusObj = Status(po.status);
-
-          return (
-            <div
-              key={po.id}
-              className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
-            >
-              <div className="flex justify-between items-center">
-
-                <h3 className="font-bold text-lg">
-                  {po.reference}
-                </h3>
-
-                <span
-                  className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
-                >
-                  {statusObj.state}
-                </span>
-
-              </div>
-
-              <div className="mt-4 space-y-2 text-sm">
-
-                <p>
-                  <span className="font-semibold">
-                    Supplier:
-                  </span>{" "}
-                  {po.supplierName}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Email:
-                  </span>{" "}
-                  {po.supplierEmail}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Phone:
-                  </span>{" "}
-                  {po.supplierPhone}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Order Date:
-                  </span>{" "}
-                  {formatDate(po.orderDate)}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Delivery:
-                  </span>{" "}
-                  {po.deliveryDate
-                    ? formatDate(po.deliveryDate)
-                    : "-"}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Subtotal:
-                  </span>{" "}
-                  {po.subTotal} TND
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Tax:
-                  </span>{" "}
-                  {po.tax} TND
-                </p>
-
-                <p className="font-bold text-lg text-[#6C4DFF]">
-                  {po.total} TND
-                </p>
-
-                <p className="text-gray-500 text-xs">
-                  {formatDate(po.createdAt)}
-                </p>
-
-              </div>
-
-              <button
-                onClick={() =>
-                  downloadPO(po.id)
-                }
-                className="w-full mt-5 bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold"
-              >
-                Download
-              </button>
-            </div>
-          );
-        })
-      )}
+<div className="lg:hidden space-y-4">
+  {filteredPO.length === 0 ? (
+    <div className="bg-white rounded-3xl p-6 text-center text-gray-400">
+      {t("messages.noResults")}
     </div>
+  ) : (
+    filteredPO.map((po) => {
+      const statusObj = Status(po.status);
+
+      return (
+        <div
+          key={po.id}
+          className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
+        >
+          <div className="flex justify-between items-center">
+            <h3 className="font-bold text-lg">
+              {po.reference.replace(/^PO/, "SO")}
+            </h3>
+
+            <span
+              className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+            >
+              {statusObj.state}
+            </span>
+          </div>
+
+          <div className="mt-4 space-y-2 text-sm">
+            <p>
+              <span className="font-semibold">
+                {t("mobile.supplier")}:
+              </span>{" "}
+              {po.supplierName}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.email")}:
+              </span>{" "}
+              {po.supplierEmail}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.phone")}:
+              </span>{" "}
+              {po.supplierPhone}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.orderDate")}:
+              </span>{" "}
+              {formatDate(po.orderDate)}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.deliveryDate")}:
+              </span>{" "}
+              {po.deliveryDate
+                ? formatDate(po.deliveryDate)
+                : "-"}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.subtotal")}:
+              </span>{" "}
+              {formatTND(po.subTotal)}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.tax")}:
+              </span>{" "}
+              {formatTND(po.tax)}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.total")}:
+              </span>{" "}
+              {formatTND(po.total)}
+            </p>
+
+            <p className="text-gray-500 text-xs">
+              {formatDate(po.createdAt)}
+            </p>
+          </div>
+
+          <button
+            onClick={() => downloadPO(po.id)}
+            className="w-full mt-5 bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold"
+          >
+            {t("buttons.download")}
+          </button>
+        </div>
+      );
+    })
+  )}
+</div>
   </>
 )}
     </div>

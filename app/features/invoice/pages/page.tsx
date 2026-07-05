@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import SearchBar from "../../components/searchBar";
 import { fetchInvoice } from "../service/invoiceService";
 import { downloadInvoice } from "../service/invoiceService";
+import { formatDate, formatTND } from "../../services/generalFunctions";
+import { useTranslation } from "react-i18next";
 
 type Invoice = {
   id: number;
@@ -36,20 +38,11 @@ function Page() {
   const [error, setError] = useState("");
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [query, setQuery] = useState("");
+const { t } = useTranslation("invoice");
 
   const router = useRouter();
 
   // ✅ format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
 
   // ✅ filter
   const filteredInvoice = invoice.filter((d) =>
@@ -94,30 +87,33 @@ function Page() {
 
 
   // ✅ STATUS
-  const Status = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return {
-          state: "DRAFT",
-          style: "bg-yellow-500 text-white px-2 py-1 rounded",
-        };
-      case "SENT":
-        return {
-          state: "SENT",
-          style: "bg-blue-500 text-white px-2 py-1 rounded",
-        };
-      case "PAID":
-        return {
-          state: "PAID",
-          style: "bg-green-500 text-white px-2 py-1 rounded",
-        };
-      default:
-        return {
-          state: status,
-          style: "bg-gray-400 text-white px-2 py-1 rounded",
-        };
-    }
-  };
+const Status = (status: string) => {
+  switch (status) {
+    case "DRAFT":
+      return {
+        state: t("status.DRAFT").toUpperCase(),
+        style: "bg-yellow-500 text-white px-2 py-1 rounded",
+      };
+
+    case "SENT":
+      return {
+        state: t("status.RECIEVED").toUpperCase(),
+        style: "bg-blue-500 text-white px-2 py-1 rounded",
+      };
+
+    case "PAID":
+      return {
+        state: t("status.PAID").toUpperCase(),
+        style: "bg-green-500 text-white px-2 py-1 rounded",
+      };
+
+    default:
+      return {
+        state: t("status.CANCELLED").toUpperCase(),
+        style: "bg-gray-400 text-white px-2 py-1 rounded",
+      };
+  }
+};
 
   if (!isAuthChecked) return null;
 
@@ -139,30 +135,59 @@ function Page() {
     <div className="hidden lg:block overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-200">
       <table className="min-w-full text-sm text-gray-700">
 
-        <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-          <tr>
-            <th className="px-6 py-5 text-left">Reference</th>
-            <th className="px-6 py-5 text-left">Email</th>
-            <th className="px-6 py-5 text-left">Website</th>
-            <th className="px-6 py-5 text-left">Description</th>
-            <th className="px-6 py-5 text-left">Amount</th>
-            <th className="px-6 py-5 text-left">TVA</th>
-            <th className="px-6 py-5 text-left">Total</th>
-            <th className="px-6 py-5 text-left">Status</th>
-            <th className="px-6 py-5 text-left">Created At</th>
-            <th className="px-6 py-5 text-left">Action</th>
-          </tr>
-        </thead>
+<thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+  <tr>
+    <th className="px-6 py-5 text-left">
+      {t("table.reference")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.email")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.website")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.description")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.amount")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.tva")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.total")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.status")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.created")}
+    </th>
+
+    <th className="px-6 py-5 text-left">
+      {t("table.action")}
+    </th>
+  </tr>
+</thead>
 
         <tbody className="divide-y divide-gray-100">
           {filteredInvoice.length === 0 ? (
             <tr>
-              <td
-                colSpan={10}
-                className="text-center py-10 text-gray-400"
-              >
-                No results found
-              </td>
+<td
+  colSpan={10}
+  className="text-center py-10 text-gray-400"
+>
+  {t("messages.noResults")}
+</td>
             </tr>
           ) : (
             filteredInvoice.map((d, index) => {
@@ -192,7 +217,7 @@ function Page() {
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
                     >
-                      Visit
+                      {t("buttons.visit")}
                     </a>
                   </td>
 
@@ -201,15 +226,15 @@ function Page() {
                   </td>
 
                   <td className="px-6 py-5">
-                    {d.subTotal} TND
+                    {formatTND(d.subTotal)}
                   </td>
 
                   <td className="px-6 py-5">
-                    {d.tva * 100}%
+                    {d.tva}%
                   </td>
 
                   <td className="px-6 py-5 font-bold">
-                    {d.total} TND
+                    {formatTND(d.total)}
                   </td>
 
                   <td className="px-6 py-5">
@@ -226,21 +251,13 @@ function Page() {
 
                   <td className="px-6 py-5">
                     <button
-                      disabled={
-                        d.status !== "SENT" &&
-                        d.status !== "PAID"
-                      }
+         
                       onClick={() =>
                         downloadInvoice(d.id)
                       }
-                      className={`px-5 py-2 rounded-xl text-white ${
-                        d.status === "SENT" ||
-                        d.status === "PAID"
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                      className={"px-5 py-2 rounded-xl text-white bg-green-600 hover:bg-green-700"}
                     >
-                      Download
+                     {t("buttons.download")}
                     </button>
                   </td>
                 </tr>
@@ -253,112 +270,107 @@ function Page() {
     </div>
 
     {/* ================= MOBILE ================= */}
-    <div className="lg:hidden space-y-4">
-
-      {filteredInvoice.length === 0 ? (
-        <div className="bg-white rounded-3xl p-6 text-center text-gray-400 shadow-sm">
-          No results found
-        </div>
-      ) : (
-        filteredInvoice.map((d) => {
-          const statusObj = Status(d.status);
-
-          return (
-            <div
-              key={d.id}
-              className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
-            >
-              <div className="flex justify-between items-center">
-
-                <h3 className="font-bold text-lg">
-                  {d.reference}
-                </h3>
-
-                <span
-                  className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
-                >
-                  {statusObj.state}
-                </span>
-
-              </div>
-
-              <div className="mt-4 space-y-2 text-sm">
-
-                <p>
-                  <span className="font-semibold">
-                    Email:
-                  </span>{" "}
-                  {d.contact?.user?.email}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Website:
-                  </span>{" "}
-                  <a
-                    href={d.webSite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    Visit
-                  </a>
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Description:
-                  </span>{" "}
-                  {d.name}
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    Amount:
-                  </span>{" "}
-                  {d.subTotal} TND
-                </p>
-
-                <p>
-                  <span className="font-semibold">
-                    TVA:
-                  </span>{" "}
-                  {d.tva * 100}%
-                </p>
-
-                <p className="text-lg font-bold text-[#6C4DFF]">
-                  {d.total} TND
-                </p>
-
-                <p className="text-xs text-gray-500">
-                  {formatDate(d.createdAt)}
-                </p>
-
-              </div>
-
-              <button
-                disabled={
-                  d.status !== "SENT" &&
-                  d.status !== "PAID"
-                }
-                onClick={() =>
-                  downloadInvoice(d.id)
-                }
-                className={`w-full mt-5 py-3 rounded-2xl text-white font-semibold ${
-                  d.status === "SENT" ||
-                  d.status === "PAID"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-gray-300 cursor-not-allowed"
-                }`}
-              >
-                Download
-              </button>
-            </div>
-          );
-        })
-      )}
-
+<div className="lg:hidden space-y-4">
+  {filteredInvoice.length === 0 ? (
+    <div className="bg-white rounded-3xl p-6 text-center text-gray-400 shadow-sm">
+      {t("messages.noResults")}
     </div>
+  ) : (
+    filteredInvoice.map((d) => {
+      const statusObj = Status(d.status);
+
+      return (
+        <div
+          key={d.id}
+          className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5"
+        >
+          <div className="flex justify-between items-center">
+            <h3 className="font-bold text-lg">
+              {d.reference}
+            </h3>
+
+            <span
+              className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+            >
+              {statusObj.state}
+            </span>
+          </div>
+
+          <div className="mt-4 space-y-2 text-sm">
+            <p>
+              <span className="font-semibold">
+                {t("mobile.email")}:
+              </span>{" "}
+              {d.contact?.user?.email}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.website")}:
+              </span>{" "}
+              <a
+                href={d.webSite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                {t("buttons.visit")}
+              </a>
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.description")}:
+              </span>{" "}
+              {d.name}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.amount")}:
+              </span>{" "}
+              {formatTND(d.subTotal)}
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.tva")}:
+              </span>{" "}
+              {d.tva}%
+            </p>
+
+            <p>
+              <span className="font-semibold">
+                {t("mobile.total")}:
+              </span>{" "}
+              {formatTND(d.total)}
+            </p>
+
+            <p className="text-xs text-gray-500">
+              {t("mobile.created")}: {formatDate(d.createdAt)}
+            </p>
+          </div>
+
+          <button
+            disabled={
+              d.status !== "RECIEVED" &&
+              d.status !== "PAID"
+            }
+            onClick={() => downloadInvoice(d.id)}
+            className={`w-full mt-5 py-3 rounded-2xl text-white font-semibold ${
+              d.status === "RECIEVED" ||
+              d.status === "PAID"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
+          >
+            {t("buttons.download")}
+          </button>
+        </div>
+      );
+    })
+  )}
+</div>
   </>
 )}
     </div>

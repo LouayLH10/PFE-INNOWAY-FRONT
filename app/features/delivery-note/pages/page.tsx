@@ -6,6 +6,8 @@ import { getUserFromToken } from "../../auth/pages/login/user";
 import { useRouter } from "next/navigation";
 import SearchBar from "../../components/searchBar";
 import { downloadDN,fetchDN } from "../service/deliveryNoteService";
+import { formatDate } from "../../services/generalFunctions";
+import { useTranslation } from "react-i18next";
 
 type DeliveryNote = {
   id: number;
@@ -43,17 +45,6 @@ function Page() {
 
   const router = useRouter();
 
-  // ✅ format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
 
   // ✅ filter
 const filteredDN = deliveryNotes.filter((dn) =>
@@ -97,21 +88,25 @@ const filteredDN = deliveryNotes.filter((dn) =>
 
 
   // ✅ STATUS
+const { t } = useTranslation("deliveryNote");
+
 const Status = (status: string) => {
   switch (status) {
     case "PENDING":
       return {
-        state: "PENDING",
+        state: t("status.PENDING").toUpperCase(),
         style: "bg-yellow-500 text-white px-2 py-1 rounded",
       };
+
     case "DELIVERED":
       return {
-        state: "DELIVERED",
+        state: t("status.DELIVERED").toUpperCase(),
         style: "bg-green-500 text-white px-2 py-1 rounded",
       };
+
     default:
       return {
-        state: status,
+        state: t("status.SHIPPED").toUpperCase(),
         style: "bg-gray-400 text-white px-2 py-1 rounded",
       };
   }
@@ -121,23 +116,23 @@ const Status = (status: string) => {
 return (
   <div className="p-4 sm:p-6 mt-5">
 
-    <SearchBar
-      value={query}
-      onChange={setQuery}
-      placeholder="Search Delivery Note..."
-    />
+<SearchBar
+  value={query}
+  onChange={setQuery}
+  placeholder={t("search.placeholder")}
+/>
 
-    {loading && (
-      <p className="mt-6 text-center">
-        Loading...
-      </p>
-    )}
+{loading && (
+  <p className="mt-6 text-center">
+    {t("messages.loading")}
+  </p>
+)}
 
-    {error && (
-      <p className="mt-6 text-center text-red-500">
-        {error}
-      </p>
-    )}
+{error && (
+  <p className="mt-6 text-center text-red-500">
+    {t("messages.fetchError")}
+  </p>
+)}
 
     {!loading && !error && (
       <>
@@ -149,59 +144,57 @@ return (
 
           <table className="min-w-full text-sm text-gray-700">
 
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-              <tr>
+         <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+  <tr>
+    <th className="px-6 py-5 text-left">
+      {t("table.reference")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Reference
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.client")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Client
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.email")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Email
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.location")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Location
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.deliveryDate")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Delivery Date
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.items")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Items
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.status")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Status
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.created")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Created
-                </th>
-
-                <th className="px-6 py-5 text-left">
-                  Action
-                </th>
-
-              </tr>
-            </thead>
+    <th className="px-6 py-5 text-left">
+      {t("table.action")}
+    </th>
+  </tr>
+</thead>
 
             <tbody className="divide-y divide-gray-100">
 
               {filteredDN.length === 0 ? (
 
                 <tr>
-                  <td
-                    colSpan={9}
-                    className="text-center py-10 text-gray-400"
-                  >
-                    No results found
-                  </td>
+  <td
+  colSpan={9}
+  className="text-center py-10 text-gray-400"
+>
+  {t("messages.noResults")}
+</td>
                 </tr>
 
               ) : (
@@ -269,7 +262,7 @@ return (
                           }
                           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm transition"
                         >
-                          Download
+                         {t("buttons.download")}
                         </button>
 
                       </td>
@@ -290,110 +283,86 @@ return (
         {/* ========================= */}
         {/* Mobile */}
         {/* ========================= */}
+<div className="lg:hidden space-y-4">
+  {filteredDN.length === 0 ? (
+    <div className="bg-white rounded-3xl p-8 text-center text-gray-400">
+      {t("messages.noResults")}
+    </div>
+  ) : (
+    filteredDN.map((dn) => {
+      const statusObj = Status(dn.status);
 
-        <div className="lg:hidden space-y-4">
+      return (
+        <div
+          key={dn.id}
+          className="bg-white rounded-3xl border border-gray-200 shadow-sm p-5"
+        >
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-bold text-lg">
+                {dn.reference}
+              </h3>
 
-          {filteredDN.length === 0 ? (
-
-            <div className="bg-white rounded-3xl p-8 text-center text-gray-400">
-              No results found
+              <p className="text-gray-500 text-sm mt-1">
+                {dn.contact?.user?.name}
+              </p>
             </div>
 
-          ) : (
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold ${statusObj.style}`}
+            >
+              {statusObj.state}
+            </span>
+          </div>
 
-            filteredDN.map((dn) => {
+          <div className="mt-5 space-y-2 text-sm">
+            <p>
+              <span className="font-semibold">
+                {t("mobile.email")}:
+              </span>{" "}
+              {dn.contact?.user?.email}
+            </p>
 
-              const statusObj = Status(dn.status);
+            <p>
+              <span className="font-semibold">
+                {t("mobile.location")}:
+              </span>{" "}
+              {dn.location}
+            </p>
 
-              return (
+            <p>
+              <span className="font-semibold">
+                {t("mobile.deliveryDate")}:
+              </span>{" "}
+              {formatDate(dn.deliveryDate)}
+            </p>
 
-                <div
-                  key={dn.id}
-                  className="bg-white rounded-3xl border border-gray-200 shadow-sm p-5"
-                >
+            <p>
+              <span className="font-semibold">
+                {t("mobile.items")}:
+              </span>{" "}
+              {dn.items?.length || 0}
+            </p>
 
-                  <div className="flex justify-between items-start">
+            <p>
+              <span className="font-semibold">
+                {t("mobile.created")}:
+              </span>{" "}
+              {formatDate(dn.createdAt)}
+            </p>
+          </div>
 
-                    <div>
-
-                      <h3 className="font-bold text-lg">
-                        {dn.reference}
-                      </h3>
-
-                      <p className="text-gray-500 text-sm mt-1">
-                        {dn.contact?.user?.name}
-                      </p>
-
-                    </div>
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${statusObj.style}`}
-                    >
-                      {statusObj.state}
-                    </span>
-
-                  </div>
-
-                  <div className="mt-5 space-y-2 text-sm">
-
-                    <p>
-                      <span className="font-semibold">
-                        Email:
-                      </span>{" "}
-                      {dn.contact?.user?.email}
-                    </p>
-
-                    <p>
-                      <span className="font-semibold">
-                        Location:
-                      </span>{" "}
-                      {dn.location}
-                    </p>
-
-                    <p>
-                      <span className="font-semibold">
-                        Delivery:
-                      </span>{" "}
-                      {formatDate(
-                        dn.deliveryDate
-                      )}
-                    </p>
-
-                    <p>
-                      <span className="font-semibold">
-                        Items:
-                      </span>{" "}
-                      {dn.items?.length || 0}
-                    </p>
-
-                    <p>
-                      <span className="font-semibold">
-                        Created:
-                      </span>{" "}
-                      {formatDate(
-                        dn.createdAt
-                      )}
-                    </p>
-
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      downloadDN(dn.id)
-                    }
-                    className="mt-5 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition"
-                  >
-                    Download
-                  </button>
-
-                </div>
-
-              );
-            })
-
-          )}
-
+          <button
+            onClick={() => downloadDN(dn.id)}
+            className="mt-5 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition"
+          >
+            {t("buttons.download")}
+          </button>
         </div>
+      );
+    })
+  )}
+</div>
 
       </>
     )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import {
   BarChart,
   Bar,
@@ -30,19 +31,20 @@ interface PurchasedProductsProps {
 function PurchasedProductsChart({
   purchacedProd,
 }: PurchasedProductsProps) {
+  const[ t] = useTranslation("dashboard");
   const data = [
-    { month: "Jan", purchased: purchacedProd.jan },
-    { month: "Feb", purchased: purchacedProd.feb },
-    { month: "Mar", purchased: purchacedProd.mar },
-    { month: "Apr", purchased: purchacedProd.apr },
-    { month: "May", purchased: purchacedProd.may },
-    { month: "Jun", purchased: purchacedProd.jun },
-    { month: "Jul", purchased: purchacedProd.jul },
-    { month: "Aug", purchased: purchacedProd.aug },
-    { month: "Sep", purchased: purchacedProd.sep },
-    { month: "Oct", purchased: purchacedProd.oct },
-    { month: "Nov", purchased: purchacedProd.nov },
-    { month: "Dec", purchased: purchacedProd.dec },
+    { month: t("purchasedProducts.months.jan"), purchased: purchacedProd.jan },
+    { month: t("purchasedProducts.months.feb"), purchased: purchacedProd.feb },
+    { month: t("purchasedProducts.months.mar"), purchased: purchacedProd.mar },
+    { month: t("purchasedProducts.months.apr"), purchased: purchacedProd.apr },
+    { month: t("purchasedProducts.months.may"), purchased: purchacedProd.may },
+    { month: t("purchasedProducts.months.jun"), purchased: purchacedProd.jun },
+    { month: t("purchasedProducts.months.jul"), purchased: purchacedProd.jul },
+    { month: t("purchasedProducts.months.aug"), purchased: purchacedProd.aug },
+    { month: t("purchasedProducts.months.sep"), purchased: purchacedProd.sep },
+    { month: t("purchasedProducts.months.oct"), purchased: purchacedProd.oct },
+    { month: t("purchasedProducts.months.nov"), purchased: purchacedProd.nov },
+    { month: t("purchasedProducts.months.dec"), purchased: purchacedProd.dec },
   ];
 
   const totalPurchased = data.reduce(
@@ -64,17 +66,17 @@ function PurchasedProductsChart({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-xl font-bold text-gray-800">
-            Purchased Products
+            {t("purchasedProducts.title")}
           </h2>
 
           <p className="text-sm text-gray-500">
-            Products purchased over the year
+            {t("purchasedProducts.description")}
           </p>
         </div>
 
         <select className="border border-gray-200 rounded-xl px-3 py-2 text-sm">
-          <option>This Year</option>
-          <option>Last Year</option>
+         <option>{t("purchasedProducts.thisYear")}</option>
+  <option>{t("purchasedProducts.lastYear")}</option>
         </select>
       </div>
 
@@ -116,7 +118,7 @@ function PurchasedProductsChart({
       <div className="grid grid-cols-3 gap-4 mt-4">
         <div className="bg-[#F4F3FF] rounded-2xl p-4 text-center">
           <p className="text-sm text-gray-500">
-            Total Purchased
+          {t("purchasedProducts.totalPurchased")}
           </p>
 
           <p className="font-bold text-xl text-[#6C4DFF]">
@@ -126,7 +128,7 @@ function PurchasedProductsChart({
 
         <div className="bg-green-50 rounded-2xl p-4 text-center">
           <p className="text-sm text-gray-500">
-            Best Month
+            {t("purchasedProducts.bestMonth")}
           </p>
 
           <p className="font-bold text-xl text-green-600">
@@ -136,7 +138,7 @@ function PurchasedProductsChart({
 
         <div className="bg-blue-50 rounded-2xl p-4 text-center">
           <p className="text-sm text-gray-500">
-            Average / Month
+{t("purchasedProducts.averagePerMonth")}
           </p>
 
           <p className="font-bold text-xl text-blue-600">

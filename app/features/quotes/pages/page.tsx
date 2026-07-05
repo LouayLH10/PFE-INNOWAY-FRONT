@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import SearchBar from "../../components/searchBar";
 import { fetchQuote } from "../service/quoteService";
 import { downloadQuote } from "../service/quoteService";
+import { formatDate, formatTND } from "../../services/generalFunctions";
+import { useTranslation } from "react-i18next";
 
 type Quote = {
   id: number;
@@ -35,20 +37,11 @@ function Page() {
   const [error, setError] = useState("");
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [query, setQuery] = useState("");
-
+const { t } = useTranslation("quotes");
   const router = useRouter();
 
   // ✅ format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
 
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
 
   // ✅ filter
 const filteredQuote = quote.filter((d) =>
@@ -80,7 +73,7 @@ const filteredQuote = quote.filter((d) =>
         setError("");
       } catch (err) {
         console.error(err);
-        setError("Erreur lors du chargement des quote");
+        setError(t("loadingError"));
       } finally {
         setLoading(false);
       }
@@ -93,30 +86,40 @@ const filteredQuote = quote.filter((d) =>
 
 
   // ✅ STATUS
-  const Status = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return {
-          state: "DRAFT",
-          style: "bg-yellow-500 text-white px-2 py-1 rounded",
-        };
-      case "SENT":
-        return {
-          state: "SENT",
-          style: "bg-blue-500 text-white px-2 py-1 rounded",
-        };
-      case "PAID":
-        return {
-          state: "PAID",
-          style: "bg-green-500 text-white px-2 py-1 rounded",
-        };
-      default:
-        return {
-          state: status,
-          style: "bg-gray-400 text-white px-2 py-1 rounded",
-        };
-    }
-  };
+const Status = (status: string) => {
+  switch (status) {
+    case "DRAFT":
+      return {
+        state: t("status.draft").toUpperCase(),
+        style: "bg-yellow-500 text-white px-2 py-1 rounded",
+      };
+    case "SENT":
+      return {
+        state: t("status.sent").toUpperCase(),
+        style: "bg-blue-500 text-white px-2 py-1 rounded",
+      };
+    case "READY":
+      return {
+        state: t("status.ready").toUpperCase(),
+        style: "bg-green-500 text-white px-2 py-1 rounded",
+      };
+    case "PAID":
+      return {
+        state: t("status.paid").toUpperCase(),
+        style: "bg-green-500 text-white px-2 py-1 rounded",
+      };
+    case "CANCELLED":
+      return {
+        state: t("status.cancelled").toUpperCase(),
+        style: "bg-red-500 text-white px-2 py-1 rounded",
+      };
+    default:
+      return {
+        state: status.toUpperCase(),
+        style: "bg-gray-400 text-white px-2 py-1 rounded",
+      };
+  }
+};
 
   if (!isAuthChecked) return null;
 
@@ -126,11 +129,10 @@ return (
     <SearchBar
       value={query}
       onChange={setQuery}
-      placeholder="Search quote..."
-    />
+placeholder={t("searchPlaceholder")}  />
 
     {loading && (
-      <p className="mt-5">Loading...</p>
+      <p className="mt-5">{t("loading")}</p>
     )}
 
     {error && (
@@ -148,53 +150,49 @@ return (
 
           <table className="min-w-full text-sm text-gray-700">
 
-            <thead className="bg-gray-50 border-b border-gray-200">
+      <thead className="bg-gray-50 border-b border-gray-200">
+  <tr className="text-gray-500 text-xs uppercase">
+    <th className="px-6 py-5 text-left">
+      {t("table.reference")}
+    </th>
 
-              <tr className="text-gray-500 text-xs uppercase">
+    <th className="px-6 py-5 text-left">
+      {t("table.email")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Reference
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.website")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Email
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.description")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Website
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.amount")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Description
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.tva")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Amount
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.total")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  TVA
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.status")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Total
-                </th>
+    <th className="px-6 py-5 text-left">
+      {t("table.created")}
+    </th>
 
-                <th className="px-6 py-5 text-left">
-                  Status
-                </th>
-
-                <th className="px-6 py-5 text-left">
-                  Created
-                </th>
-
-                <th className="px-6 py-5 text-left">
-                  Action
-                </th>
-
-              </tr>
-
-            </thead>
+    <th className="px-6 py-5 text-left">
+      {t("table.action")}
+    </th>
+  </tr>
+</thead>
 
             <tbody>
 
@@ -245,7 +243,7 @@ return (
                             target="_blank"
                             className="text-blue-600 hover:underline"
                           >
-                            Visit
+                            {t("buttons.visit")}
                           </a>
 
                         ) : (
@@ -259,7 +257,7 @@ return (
                       </td>
 
                       <td className="px-6 py-5">
-                        {d.amount} TND
+                        {formatTND(d.amount)} 
                       </td>
 
                       <td className="px-6 py-5">
@@ -267,7 +265,7 @@ return (
                       </td>
 
                       <td className="px-6 py-5 font-bold">
-                        {d.totalAmount} TND
+                        {formatTND(d.totalAmount)}
                       </td>
 
                       <td className="px-6 py-5">
@@ -297,7 +295,7 @@ return (
                               : "bg-gray-300"
                           }`}
                         >
-                          Download
+                       { t("buttons.download")}
                         </button>
 
                       </td>
@@ -320,140 +318,136 @@ return (
         {/* MOBILE CARDS */}
         {/* ========================= */}
 
-        <div className="lg:hidden mt-5 space-y-4">
+   <div className="lg:hidden mt-5 space-y-4">
 
-          {filteredQuote.length === 0 ? (
+  {filteredQuote.length === 0 ? (
 
-            <div className="bg-white rounded-3xl p-6 text-center">
+    <div className="bg-white rounded-3xl p-6 text-center">
+      {t("noResults")}
+    </div>
 
-              No results found
+  ) : (
+
+    filteredQuote.map((d) => {
+
+      const statusObj = Status(d.status);
+
+      return (
+
+        <div
+          key={d.id}
+          className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5"
+        >
+
+          <div className="flex justify-between items-start">
+
+            <div>
+
+              <h2 className="font-bold text-lg">
+                {d.reference}
+              </h2>
+
+              <p className="text-sm text-gray-500">
+                {formatDate(d.createdAt)}
+              </p>
 
             </div>
 
-          ) : (
+            <span
+              className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
+            >
+              {statusObj.state}
+            </span>
 
-            filteredQuote.map((d) => {
+          </div>
 
-              const statusObj = Status(d.status);
+          <div className="mt-4 space-y-2 text-sm">
 
-              return (
+            <p>
 
-                <div
-                  key={d.id}
-                  className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5"
-                >
+              <span className="font-semibold">
+                {t("mobile.email")} :
+              </span>{" "}
 
-                  <div className="flex justify-between items-start">
+              {d.contact?.user?.email || d.email}
 
-                    <div>
+            </p>
 
-                      <h2 className="font-bold text-lg">
-                        {d.reference}
-                      </h2>
+            <p>
 
-                      <p className="text-sm text-gray-500">
-                        {formatDate(d.createdAt)}
-                      </p>
+              <span className="font-semibold">
+                {t("mobile.description")} :
+              </span>{" "}
 
-                    </div>
+              {d.subject}
 
-                    <span
-                      className={`${statusObj.style} px-3 py-1 rounded-full text-xs`}
-                    >
-                      {statusObj.state}
-                    </span>
+            </p>
 
-                  </div>
+            <p>
 
-                  <div className="mt-4 space-y-2 text-sm">
+              <span className="font-semibold">
+                {t("mobile.amount")} :
+              </span>{" "}
 
-                    <p>
+              {formatTND(d.amount)}
 
-                      <span className="font-semibold">
-                        Email :
-                      </span>{" "}
+            </p>
 
-                      {d.contact?.user?.email || d.email}
+            <p>
 
-                    </p>
+              <span className="font-semibold">
+                {t("mobile.tva")} :
+              </span>{" "}
 
-                    <p>
+              {d.tva}%
 
-                      <span className="font-semibold">
-                        Description :
-                      </span>{" "}
+            </p>
 
-                      {d.subject}
+            <p>
 
-                    </p>
+              <span className="font-semibold">
+                {t("mobile.total")} :
+              </span>{" "}
 
-                    <p>
+              {formatTND(d.totalAmount)}
 
-                      <span className="font-semibold">
-                        Amount :
-                      </span>{" "}
+            </p>
 
-                      {d.amount} TND
+            {d.webSite && (
 
-                    </p>
+              <a
+                href={d.webSite}
+                target="_blank"
+                className="text-blue-600 underline"
+              >
+                {t("buttons.visitWebsite")}
+              </a>
 
-                    <p>
+            )}
 
-                      <span className="font-semibold">
-                        TVA :
-                      </span>{" "}
+          </div>
 
-                      {d.tva}%
-
-                    </p>
-
-                    <p>
-
-                      <span className="font-semibold">
-                        Total :
-                      </span>{" "}
-
-                      {d.totalAmount} TND
-
-                    </p>
-
-                    {d.webSite && (
-
-                      <a
-                        href={d.webSite}
-                        target="_blank"
-                        className="text-blue-600 underline"
-                      >
-                        Visit Website
-                      </a>
-
-                    )}
-
-                  </div>
-
-                  <button
-                    disabled={d.status !== "READY"}
-                    onClick={() =>
-                      downloadQuote(d.id)
-                    }
-                    className={`mt-5 w-full py-3 rounded-xl text-white font-semibold ${
-                      d.status === "READY"
-                        ? "bg-green-600"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    Download
-                  </button>
-
-                </div>
-
-              );
-
-            })
-
-          )}
+          <button
+            disabled={d.status !== "READY"}
+            onClick={() => downloadQuote(d.id)}
+            className={`mt-5 w-full py-3 rounded-xl text-white font-semibold ${
+              d.status === "READY"
+                ? "bg-green-600"
+                : "bg-gray-300"
+            }`}
+          >
+            {t("buttons.download")}
+          </button>
 
         </div>
+
+      );
+
+    })
+
+  )}
+
+</div>
 
       </>
     )}

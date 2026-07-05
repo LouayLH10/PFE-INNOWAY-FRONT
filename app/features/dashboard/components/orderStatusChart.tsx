@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import {
   PieChart,
   Pie,
@@ -22,24 +23,26 @@ export default function OrderStatusChart({
   cancelled,
   pending,
 }:OrderStatusChartProps) {
-  const data = [
+ const { t } = useTranslation("dashboard");
+
+const data = [
   {
-    name: "Approved",
+    name: t("orderChart.approved"),
     value: approved,
     color: "#22C55E",
   },
   {
-    name: "Pending",
+    name: t("orderChart.pending"),
     value: pending,
     color: "#F59E0B",
   },
   {
-    name: "Cancelled",
+    name: t("orderChart.cancelled"),
     value: cancelled,
     color: "#EF4444",
   },
   {
-    name: "Recieved",
+    name: t("orderChart.received"),
     value: recieved,
     color: "#3B82F6",
   },
@@ -52,11 +55,11 @@ export default function OrderStatusChart({
 
         <div>
           <h2 className="text-xl font-bold text-gray-800">
-            Orders by Status
+           {t("orderChart.title")}
           </h2>
 
           <p className="text-sm text-gray-500">
-            Distribution of orders
+            {t("orderChart.description")}
           </p>
         </div>
 
@@ -104,7 +107,7 @@ export default function OrderStatusChart({
 
         <div className="bg-green-50 rounded-2xl p-3 text-center">
           <p className="text-green-600 text-sm">
-            Approved
+          {t("orderChart.approved")}
           </p>
 
           <p className="font-bold text-xl">
@@ -114,7 +117,7 @@ export default function OrderStatusChart({
 
         <div className="bg-amber-50 rounded-2xl p-3 text-center">
           <p className="text-amber-600 text-sm">
-            Pending
+           {t("orderChart.pending")}
           </p>
 
           <p className="font-bold text-xl">
@@ -124,7 +127,7 @@ export default function OrderStatusChart({
 
         <div className="bg-red-50 rounded-2xl p-3 text-center">
           <p className="text-red-600 text-sm">
-            Cancelled
+         {t("orderChart.cancelled")}
           </p>
 
           <p className="font-bold text-xl">
@@ -134,7 +137,7 @@ export default function OrderStatusChart({
 
         <div className="bg-blue-50 rounded-2xl p-3 text-center">
           <p className="text-blue-600 text-sm">
-            Recieved
+           {t("orderChart.received")}
           </p>
 
           <p className="font-bold text-xl">

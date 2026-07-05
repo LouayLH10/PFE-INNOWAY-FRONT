@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import {
   PieChart,
   Pie,
@@ -10,36 +11,37 @@ import {
 } from "recharts";
 
 type InvoiceStatusChartProps = {
-  sent: number;
+  recieved: number;
   draft: number;
   cancelled: number;
   paid: number;
 };
 
 export default function InvoiceStatusChart({
-  sent,
+  recieved,
   draft,
   cancelled,
   paid,
 }: InvoiceStatusChartProps) {
-  const data = [
+  const { t } = useTranslation("dashboard");
+const data = [
   {
-    name: "Paid",
+    name: t("invoiceChart.paid"),
     value: paid,
     color: "#22C55E",
   },
   {
-    name: "Sent",
-    value: sent,
+    name: t("invoiceChart.received"),
+    value: recieved,
     color: "#F59E0B",
   },
-    {
-    name: "Draft",
+  {
+    name: t("invoiceChart.draft"),
     value: draft,
     color: "#3B82F6",
   },
   {
-    name: "Cancelled",
+    name: t("invoiceChart.cancelled"),
     value: cancelled,
     color: "#EF4444",
   },
@@ -52,11 +54,11 @@ export default function InvoiceStatusChart({
 
         <div>
           <h2 className="text-xl font-bold text-gray-800">
-            Invoice per Status
-          </h2>
+ {t("invoiceChart.title")}
+           </h2>
 
           <p className="text-sm text-gray-500">
-            Distribution of invoices
+  {t("invoiceChart.description")}
           </p>
         </div>
 
@@ -109,7 +111,8 @@ export default function InvoiceStatusChart({
 
         <div className="bg-green-50 rounded-2xl p-3 text-center">
           <p className="text-green-600 text-sm">
-            Paid
+              {t("invoiceChart.paid")}
+
           </p>
 
           <p className="font-bold text-xl">
@@ -119,17 +122,17 @@ export default function InvoiceStatusChart({
 
         <div className="bg-amber-50 rounded-2xl p-3 text-center">
           <p className="text-amber-600 text-sm">
-            Sent
+  {t("invoiceChart.received")}
           </p>
 
           <p className="font-bold text-xl">
-            {sent}
+            {recieved}
           </p>
         </div>
 
         <div className="bg-red-50 rounded-2xl p-3 text-center">
           <p className="text-red-600 text-sm">
-            Cancelled
+  {t("invoiceChart.cancelled")}
           </p>
 
           <p className="font-bold text-xl">
@@ -138,7 +141,7 @@ export default function InvoiceStatusChart({
         </div>
         <div className="bg-blue-50 rounded-2xl p-3 text-center">
           <p className="text-blue-600 text-sm">
-           Draft
+  {t("invoiceChart.draft")}
           </p>
 
           <p className="font-bold text-xl">

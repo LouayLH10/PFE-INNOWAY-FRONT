@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import SearchBar from "../../components/searchBar";
 import { downloadProject, fetchProject } from "../service/projectService";
 import { ChevronDown } from "lucide-react";
+import { formatDate } from "../../services/generalFunctions";
+import { useTranslation } from "react-i18next";
 type Project = {
   id: number;
   title: string;
@@ -60,23 +62,14 @@ function Page() {
   const [error, setError] = useState("");
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [query, setQuery] = useState("");
+const { t } = useTranslation("project");
 
   const router = useRouter();
 const [openRow, setOpenRow] = useState<number | null>(null);
 const [openPhaseRow, setOpenPhaseRow] = useState<number | null>(null);
 const [openPhases, setOpenPhases] = useState(false);
 const [openMilestones, setOpenMilestones] = useState(false);
-  // ✅ format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
 
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
   const formatDateDeadline = (dateString: string) => {
     const date = new Date(dateString);
 
@@ -129,69 +122,73 @@ const filteredProject = project.filter((d) =>
 
   // ✅ STATUS
   const Status = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return {
-          state: "DRAFT",
-          style: "bg-yellow-500 text-white px-2 py-1 rounded",
-        };
-      case "SENT":
-        return {
-          state: "SENT",
-          style: "bg-blue-500 text-white px-2 py-1 rounded",
-        };
-      case "PAID":
-        return {
-          state: "PAID",
-          style: "bg-green-500 text-white px-2 py-1 rounded",
-        };
+ switch (status) {
+    case "IN_PROGRESS":
+      return {
+        state: t("phaseStatus.IN_PROGRESS").toUpperCase(),
+        style: "bg-yellow-500 text-white px-2 py-1 rounded",
+      };
+
+    case "PLANNED":
+      return {
+        state: t("Status.PLANNED").toUpperCase(),
+        style: "bg-blue-500 text-white px-2 py-1 rounded",
+      };
+
+    case "COMPLETED":
+      return {
+        state: t("Status.COMPLETED").toUpperCase(),
+        style: "bg-green-600 text-white px-2 py-1 rounded",
+      };
       default:
-        return {
-          state: status,
-          style: "bg-gray-400 text-white px-2 py-1 rounded",
-        };
-    }
+      return {
+        state: t("Status.COMPLETED").toUpperCase(),
+        style: "bg-gray-600 text-white px-2 py-1 rounded",
+      };
+  }
   };
-const phaseStatus= (status:String)=>{
-    switch (status) {
-      case "IN_PROGRESS":
-        return {
-          state: "IN PROGRESS",
-          style: "bg-yellow-500 text-white px-2 py-1 rounded",
-        };
-      case "PLANNED":
-        return {
-          state: "PLANNED",
-          style: "bg-blue-500 text-white px-2 py-1 rounded",
-        };
+const phaseStatus = (status: string) => {
+  switch (status) {
+    case "IN_PROGRESS":
+      return {
+        state: t("phaseStatus.IN_PROGRESS").toUpperCase(),
+        style: "bg-yellow-500 text-white px-2 py-1 rounded",
+      };
 
-      default:
-        return {
-          state: status,
-          style: "bg-green-600 text-white px-2 py-1 rounded",
-        };
-    }
-}
-const delivrableStatus= (status:String)=>{
-    switch (status) {
-      case "IN_PROGRESS":
-        return {
-          state: "IN PROGRESS",
-          style: "bg-yellow-500 text-white px-2 py-1 rounded",
-        };
-      case "PENDING":
-        return {
-          state: "PENDING",
-          style: "bg-blue-500 text-white px-2 py-1 rounded",
-        };
+    case "PLANNED":
+      return {
+        state: t("phaseStatus.PLANNED").toUpperCase(),
+        style: "bg-blue-500 text-white px-2 py-1 rounded",
+      };
 
-      default:
-        return {
-          state: status,
-          style: "bg-green-600 text-white px-2 py-1 rounded",
-        };
-    }
-}
+    default:
+      return {
+        state: t("phaseStatus.COMPLETED").toUpperCase(),
+        style: "bg-green-600 text-white px-2 py-1 rounded",
+      };
+  }
+};
+const delivrableStatus = (status: string) => {
+  switch (status) {
+    case "IN_PROGRESS":
+      return {
+        state: t("deliverableStatus.IN_PROGRESS").toUpperCase(),
+        style: "bg-yellow-500 text-white px-2 py-1 rounded",
+      };
+
+    case "PENDING":
+      return {
+        state: t("deliverableStatus.PENDING").toUpperCase(),
+        style: "bg-blue-500 text-white px-2 py-1 rounded",
+      };
+
+    default:
+      return {
+        state: t("deliverableStatus.COMPLETED").toUpperCase(),
+        style: "bg-green-600 text-white px-2 py-1 rounded",
+      };
+  }
+};
   if (!isAuthChecked) return null;
 
   return (
@@ -252,9 +249,9 @@ const delivrableStatus= (status:String)=>{
               <div className="grid grid-cols-2 gap-4 mt-5 text-sm">
 
                 <div>
-                  <span className="text-gray-400">
-                    Start
-                  </span>
+          <span className="text-gray-400">
+  {t("mobile.start")}
+</span>
 
                   <p className="font-medium">
                     {formatDate(d.startDate)}
@@ -262,9 +259,9 @@ const delivrableStatus= (status:String)=>{
                 </div>
 
                 <div>
-                  <span className="text-gray-400">
-                    End
-                  </span>
+       <span className="text-gray-400">
+  {t("mobile.end")}
+</span>
 
                   <p className="font-medium">
                     {d.endDate
@@ -274,9 +271,9 @@ const delivrableStatus= (status:String)=>{
                 </div>
 
                 <div>
-                  <span className="text-gray-400">
-                    Created
-                  </span>
+      <span className="text-gray-400">
+  {t("mobile.created")}
+</span>
 
                   <p className="font-medium">
                     {formatDate(d.createdAt)}
@@ -301,7 +298,7 @@ const delivrableStatus= (status:String)=>{
                   }`}
                 />
 
-                Details
+                {t("mobile.details")}
               </button>
 
               {openRow === d.id && (
@@ -311,9 +308,9 @@ const delivrableStatus= (status:String)=>{
                   {/* PHASES */}
                   <div>
 
-                    <h3 className="font-bold text-lg mb-4">
-                      Phases
-                    </h3>
+                <h3 className="font-bold text-lg mb-4">
+  {t("mobile.phases")}
+</h3>
 
                     {d.phases?.map((phase) => {
 
@@ -394,10 +391,9 @@ const delivrableStatus= (status:String)=>{
 
                   <div>
 
-                    <h3 className="font-bold text-lg mb-4">
-                      Milestones
-                    </h3>
-
+         <h3 className="font-bold text-lg mb-4">
+  {t("mobile.milestones")}
+</h3>
                     {d.milestone?.map(
                       (milestone) => {
 
@@ -451,7 +447,7 @@ const delivrableStatus= (status:String)=>{
                     }
                     className="w-full bg-green-600 text-white py-3 rounded-xl"
                   >
-                    Download
+  {t("buttons.download")}
                   </button>
 
                 </div>
@@ -476,85 +472,45 @@ const delivrableStatus= (status:String)=>{
 
     {/* HEADER */}
 
-    <thead className="bg-gray-50 border-b border-gray-200">
+   <thead className="bg-gray-50 border-b border-gray-200">
+  <tr className="text-gray-500 text-xs uppercase tracking-wider">
 
-      <tr className="text-gray-500 text-xs uppercase tracking-wider">
+    <th className="px-6 py-5 text-left font-semibold"></th>
 
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.title")}
+    </th>
 
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.clientEmail")}
+    </th>
 
-        <th className="px-6 py-5 text-left font-semibold w-12"></th>
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.description")}
+    </th>
 
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.startDate")}
+    </th>
 
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.endDate")}
+    </th>
 
-        <th className="px-6 py-5 text-left font-semibold">
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.status")}
+    </th>
 
-          Title
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.createdAt")}
+    </th>
 
-        </th>
+    <th className="px-6 py-5 text-left font-semibold">
+      {t("table.action")}
+    </th>
 
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Client Email
-
-        </th>
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Description
-
-        </th>
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Start Date
-
-        </th>
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          End Date
-
-        </th>
-
-
-
- 
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Status
-
-        </th>
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Created At
-
-        </th>
-
-
-
-        <th className="px-6 py-5 text-left font-semibold">
-
-          Action
-
-        </th>
-
-      </tr>
-
-    </thead>
+  </tr>
+</thead>
 
 
 
@@ -946,7 +902,7 @@ const delivrableStatus= (status:String)=>{
 
                                   <div className="text-lg font-bold text-blue-700 mb-4">
 
-                                    Deliverables
+  {t("details.deliverables")}
 
                                   </div>
 
@@ -1052,8 +1008,7 @@ const delivrableStatus= (status:String)=>{
 
                         />
 
-                        <span>Milestones</span>
-
+<span>{t("details.milestones")}</span>
                       </div>
 
 
@@ -1103,14 +1058,7 @@ const delivrableStatus= (status:String)=>{
 
 
                                   <div className="text-sm text-gray-500 mt-1">
-
-                                    Deadline:{" "}
-
-                                    {formatDateDeadline(
-
-                                      milestone.deadline
-
-                                    )}
+{t("details.deadline")}: {formatDateDeadline(milestone.deadline)}
 
                                   </div>
 

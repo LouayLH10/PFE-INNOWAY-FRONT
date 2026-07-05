@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState,useRef} from 'react'
 import KPI from '../components/kpi'
-import { CreditCard, FileText, FolderKanban, PieChart, Receipt, Share, Share2Icon, ShoppingCart, Truck } from 'lucide-react'
+import { CreditCard, Download, FileText, FolderKanban, PieChart, Receipt, Share, Share2Icon, ShoppingCart, Truck } from 'lucide-react'
 import UpcomingActivity from '../components/upcomingActivity'
 import Reminders from '../components/reminders'
 import InvoiceStatusChart from '../components/invoiceStatusChart'
@@ -14,8 +14,10 @@ import { fetchDN } from '../../delivery-note/service/deliveryNoteService';
 import { fetchPO } from '../../purchase-order/service/purchaseOrderService';
 import { fetchPayment } from '../../payment/service/paymentService';
 import { fetchProject } from '../../projects/service/projectService';
-import { generateDashboardPdf, sendDashboardEmail } from '../service/dashboardService';
+import { downloadDashboardPdf, generateDashboardPdf, sendDashboardEmail } from '../service/dashboardService';
 import { api } from '@/app/api/api';
+import { formatTND } from '../../services/generalFunctions';
+import { useTranslation } from 'react-i18next';
 
 function page() {
 const [nbQuote, setNbQuote] = useState(0);
@@ -32,7 +34,7 @@ console.log(api.getUri({
   url: `/quote/contact/1`,
 }));const [invoiceStats, setInvoiceStats] = useState({
   paid: 0,
-  sent: 0,
+  recieved: 0,
   cancelled: 0,
   draft:0
 });
@@ -60,6 +62,7 @@ const [subject, setSubject] = useState("");
 const [message, setMessage] = useState("");
 const [isPdfMode, setIsPdfMode] =
   useState(false);
+  const { t } = useTranslation("dashboard");
 const [openShareModal, setOpenShareModal] =
   useState(false);
 
@@ -183,7 +186,7 @@ const project = (
         (i: any) => i.status === "PAID"
       ).length,
 
-      sent: invoice.filter(
+      recieved: invoice.filter(
         (i: any) => i.status === "SENT"
       ).length,
 
@@ -273,16 +276,15 @@ console.log(due)
 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
 <h1 className="text-2xl md:text-3xl font-bold">
-          Dashboard
-       
+{t("title")}       
       </h1>
 
       <p className="text-gray-500">
-        Overview of your business metrics
+     {t("overview")}
       </p>
     </div>
 <div className="flex flex-row flex-wrap gap-3">
-  {!isPdfMode && (
+
  <select
   value={selectedYear}
   onChange={(e) =>
@@ -299,22 +301,35 @@ console.log(due)
     </option>
   ))}
 </select>
-)}
-        {!isPdfMode && (
+
+
   <button
     onClick={() =>
     generateDashboardPdf(
-      dashboardRef,
+     Number(user?.sub),
+2026,
       setPdfFile,
       setOpenShareModal,
-      setIsPdfMode
+   
     )
   }
     className="w-12 h-12 flex items-center justify-center bg-[#6C4DFF] text-white rounded-2xl shadow-lg hover:bg-[#5b3df0] transition"
   >
     <Share2Icon size={20} />
   </button>
-)}
+  
+  <button
+    onClick={() =>
+    downloadDashboardPdf(
+     Number(user?.sub),
+2026
+   
+    )
+  }
+    className="w-12 h-12 flex items-center justify-center bg-[#6C4DFF] text-white rounded-2xl shadow-lg hover:bg-[#5b3df0] transition"
+  >
+    <Download size={20} />
+  </button>
 
 
     </div>
@@ -324,15 +339,14 @@ console.log(due)
   {/* KPI SECTION */}
  <div
   className={
-isPdfMode
-? "grid grid-cols-3 gap-5"
-: "grid grid-cols-1 sm:grid-cols-2 xl:flex gap-6 overflow-x-auto pb-2 scrollbar-hide"
+
+ "grid grid-cols-1 sm:grid-cols-2 xl:flex gap-6 overflow-x-auto pb-2 scrollbar-hide"
   }
 >
 
   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Projects"
+        title={t("kpi.projects")}
         number={nbProject}
         growth="+5.2%"
         href="/features/projects/pages"
@@ -346,25 +360,11 @@ isPdfMode
       />
     </div>
 
-   <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
-      <KPI
-        title="Quotes"
-        number={nbQuote}
-        growth="+12%"
-         href="/features/quotes/pages"
-        icon={
-          <FileText
-            size={22}
-            className="text-purple-600"
-          />
-        }
-        color="bg-purple-100"
-      />
-    </div>
+
 
     <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Orders"
+        title={t("kpi.orders")}
         number={nbOrder}
         growth="+15%"
         href="/features/purchase-order/pages"
@@ -380,7 +380,7 @@ isPdfMode
 
    <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Qty Delivered / Ordered"
+        title={t("kpi.qtyDeliveredOrdered")}
         number={`${nbDn} / ${nbOrder}`}
         growth="84%"
          href="/features/delivery-note/pages"
@@ -396,7 +396,7 @@ isPdfMode
 
 <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Invoice Paid / Total"
+        title={t("kpi.invoicePaidTotal")}
         number={`${nbPyament} / ${nbInvoice}`}
         growth="74%"
         href="/features/payment/pages"
@@ -412,8 +412,8 @@ isPdfMode
 
    <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Amount Paid"
-        number={`${amount} TND`}
+        title={t("kpi.amountPaid")}
+        number={`${formatTND(amount)}`}
         growth="+8.7%"
         icon={
           <CreditCard
@@ -426,8 +426,8 @@ isPdfMode
     </div>
    <div className="min-w-0 xl:min-w-[260px] flex-shrink-0">
       <KPI
-        title="Due Balance"
-        number={`${balance} TND`}
+        title={t("kpi.dueBalance")}
+        number={`${formatTND(balance)}`}
         growth="+8.7%"
         icon={
           <CreditCard
@@ -440,43 +440,7 @@ isPdfMode
     </div>
   </div>
 
-  {/* MAIN CONTENT */}
-{isPdfMode ? (
-  <>
-    {/* Charts côte à côte */}
-    <div className="grid grid-cols-2 gap-5">
-      <InvoiceStatusChart
-        sent={invoiceStats.sent}
-        draft={invoiceStats.draft}
-        cancelled={invoiceStats.cancelled}
-        paid={invoiceStats.paid}
-      />
 
-      <OrderStatusChart
-        approved={orderStats.approved}
-        cancelled={orderStats.cancelled}
-        recieved={orderStats.recieved}
-        pending={orderStats.pending}
-      />
-    </div>
-
-    {/* Purchased Products en dessous */}
-    <div className="mt-5">
-      <PurchasedProductsChart
-        purchacedProd={purchacedProd}
-      />
-    </div>
-
-    {/* Activities + Reminders en dessous */}
-    <div className="grid grid-cols-2 gap-5 mt-5">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100">
-        <UpcomingActivity />
-      </div>
-
-      <Reminders />
-    </div>
-  </>
-) : (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {/* LEFT SIDE */}
@@ -486,7 +450,7 @@ isPdfMode
 
         <div className="flex-1">
           <InvoiceStatusChart
-            sent={invoiceStats.sent}
+            recieved={invoiceStats.recieved}
             draft={invoiceStats.draft}
             cancelled={invoiceStats.cancelled}
             paid={invoiceStats.paid}
@@ -524,7 +488,7 @@ isPdfMode
     </div>
 
   </div>
-)}
+
 {openShareModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div className="w-full max-w-md w-[95%] bg-white rounded-3xl p-6 shadow-xl">

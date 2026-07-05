@@ -3,9 +3,11 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-
+import "@/app/locales/i18n";
 import Sidebar from "./features/components/sideBar";
 import NavBar from "./features/components/navBar";
+import { getUserFromToken } from "./features/auth/pages/login/user";
+import ProtectedRoute from "./protectRoute";
 
 export default function LayoutClient({
   children,
@@ -173,31 +175,33 @@ export default function LayoutClient({
 
         {/* Main */}
 
-        <main className="flex-1 p-4 lg:p-5 pt-4 overflow-hidden min-w-0">
+<main className="flex-1 p-4 lg:p-5 pt-4 overflow-hidden min-w-0">
 
-          <div
-            className={`
-            w-full
-            min-w-0
-            bg-white
-            rounded-[35px]
-            shadow-xl
-            border
-            border-gray-100
-            overflow-y-auto
-            overflow-x-hidden
-            text-black-700
-            ${
-              isDesktop
-                ? "h-[calc(100vh-170px)] p-6"
-                : "min-h-[calc(100vh-150px)] p-4"
-            }
-          `}
-          >
-            {children}
-          </div>
+  <ProtectedRoute>
+    <div
+      className={`
+        w-full
+        min-w-0
+        bg-white
+        rounded-[35px]
+        shadow-xl
+        border
+        border-gray-100
+        overflow-y-auto
+        overflow-x-hidden
+        text-black-700
+        ${
+          isDesktop
+            ? "h-[calc(100vh-170px)] p-6"
+            : "min-h-[calc(100vh-150px)] p-4"
+        }
+      `}
+    >
+      {children}
+    </div>
+  </ProtectedRoute>
 
-        </main>
+</main>
 
       </div>
 

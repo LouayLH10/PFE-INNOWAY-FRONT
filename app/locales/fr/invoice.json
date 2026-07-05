@@ -1,0 +1,46 @@
+{
+  "search": {
+    "placeholder": "Rechercher une facture..."
+  },
+
+  "table": {
+    "reference": "Référence",
+    "email": "E-mail",
+    "website": "Site web",
+    "description": "Description",
+    "amount": "Montant",
+    "tva": "TVA",
+    "total": "Total",
+    "status": "Statut",
+    "created": "Créée le",
+    "action": "Action"
+  },
+
+  "mobile": {
+    "email": "E-mail",
+    "website": "Site web",
+    "description": "Description",
+    "amount": "Montant",
+    "tva": "TVA",
+    "total": "Total",
+    "created": "Créée le"
+  },
+
+  "status": {
+    "DRAFT": "BROUILLON",
+    "RECIEVED": "REÇUE",
+    "PAID": "PAYÉE",
+    "CANCELLED":"ANNULÉ"
+  },
+
+  "buttons": {
+    "download": "Télécharger",
+    "visit": "Visiter"
+  },
+
+  "messages": {
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "fetchError": "Erreur lors du chargement des factures."
+  }
+}

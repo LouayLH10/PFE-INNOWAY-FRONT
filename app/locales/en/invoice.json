@@ -1,0 +1,46 @@
+{
+  "search": {
+    "placeholder": "Search invoices..."
+  },
+
+  "table": {
+    "reference": "Reference",
+    "email": "Email",
+    "website": "Website",
+    "description": "Description",
+    "amount": "Amount",
+    "tva": "VAT",
+    "total": "Total",
+    "status": "Status",
+    "created": "Created",
+    "action": "Action"
+  },
+
+  "mobile": {
+    "email": "Email",
+    "website": "Website",
+    "description": "Description",
+    "amount": "Amount",
+    "tva": "VAT",
+    "total": "Total",
+    "created": "Created"
+  },
+
+  "status": {
+    "DRAFT": "DRAFT",
+    "RECIEVED": "RECIEVED",
+    "PAID": "PAID",
+    "CANCELLED":"CANCELLED"
+  },
+
+  "buttons": {
+    "download": "Download",
+    "visit": "Visit"
+  },
+
+  "messages": {
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "fetchError": "Failed to load invoices."
+  }
+}
