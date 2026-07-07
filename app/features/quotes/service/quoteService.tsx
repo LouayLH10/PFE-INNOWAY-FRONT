@@ -20,10 +20,11 @@ export const fetchQuote = async (userId: number) => {
   }
 };
 export const downloadQuote =async(id:number)=>{
-  
+     const language = localStorage.getItem("language") ;
+console.log(language)
     try {
       const res = api.get(
-        `/quote/pdf/${id}`,
+        `/quote/pdf/${id}?language=${language}`,
         { responseType: "blob" }
       );
 

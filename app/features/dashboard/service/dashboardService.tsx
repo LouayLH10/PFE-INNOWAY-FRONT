@@ -84,7 +84,8 @@ export const downloadDashboardPdf = async (
   userId: number,
   year: number,
 ) => {
-
+ const language = localStorage.getItem("language") ;
+console.log(language)
   try {
 
     const response = await api.post(
@@ -92,6 +93,7 @@ export const downloadDashboardPdf = async (
       {
         userId,
         year,
+        language
       },
       {
         responseType: "blob",

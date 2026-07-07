@@ -23,6 +23,8 @@ import { fetchInvoice } from "../invoice/service/invoiceService";
 import { fetchPayment } from "../payment/service/paymentService";
 import { fetchProject } from "../projects/service/projectService";
 import { useTranslation } from "react-i18next";
+import { fetchUnreadCount } from "../messages/service/messagesService";
+import { socket } from "@/app/socket";
 
 function Sidebar({ open, setOpen }: any) {
 const { t } = useTranslation("sidebar");
@@ -34,7 +36,7 @@ const [nbInvoice, setNbInvoice] = useState(0);
 const [nbPyament, setNbPayment] = useState(0);
 const [nbProject, setNbProject] = useState(0);
 const user = getUserFromToken();
-
+const [unreadMessages,setUnreadMessages]=useState(0);
 useEffect(() => {
 
   const loadQuotes = async () => {
@@ -53,12 +55,39 @@ const project =await fetchProject(user.sub)
     setNbInvoice(invoice.length)
     setNbPayment(payment.length)
     setNbProject(project.length)
+    const unread =
+await fetchUnreadCount(user?.sub);
+setUnreadMessages(unread);
     console.log(quotes);
 
   };
 
   loadQuotes();
 
+}, [user?.sub]);
+useEffect(() => {
+  if (!user?.sub) return;
+
+  const handleReceiveMessage = (message: any) => {
+    if (message.receiverId === user.sub) {
+      setUnreadMessages((prev) => prev + 1);
+    }
+  };
+
+socket.on("newMessage", handleReceiveMessage);
+  return () => {
+    socket.off("receiveMessage", handleReceiveMessage);
+  };
+}, [user?.sub]);
+useEffect(() => {
+  if (!user?.sub) return;
+
+  socket.connect();
+  socket.emit("join", user.sub);
+
+  return () => {
+    socket.disconnect();
+  };
 }, [user?.sub]);
 const menuItems = [
   {
@@ -114,7 +143,7 @@ const menuItems = [
     name: t("menu.messages"),
     icon: MessageCircle,
     path: "/features/messages/pages",
-    badge: "43",
+    badge: unreadMessages,
     color: "bg-purple-500",
   },
 ];

@@ -20,10 +20,11 @@ export const fetchInvoice = async (userId: number) => {
   }
 };
 export const downloadInvoice =async(id:number)=>{
-  
+     const language = localStorage.getItem("language") ;
+console.log(language)
     try {
       const res = api.get(
-        `/invoice/pdf/${id}`,
+        `/invoice/pdf/${id}?language=${language}`,
         { responseType: "blob" }
       );
 

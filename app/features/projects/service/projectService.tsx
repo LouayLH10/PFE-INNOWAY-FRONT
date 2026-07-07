@@ -20,10 +20,11 @@ export const fetchProject = async (userId: number) => {
   }
 };
 export const downloadProject =async(id:number)=>{
-  
+     const language = localStorage.getItem("language") ;
+console.log(language)
     try {
       const res = api.get(
-        `/project/pdf/${id}`,
+        `/project/pdf/${id}?language=${language}`,
         { responseType: "blob" }
       );
 

@@ -7,6 +7,7 @@ import { getUserFromToken } from "../../auth/pages/login/user";
 import {
   deleteMessage,
   fetchContact,
+  markConversationAsRead,
   sendMessage,
 } from "../service/messagesService";
 import { File, MessageCircleIcon, Paperclip, SendHorizonalIcon, SendIcon, Trash2, UploadCloud } from "lucide-react";
@@ -305,7 +306,14 @@ useEffect(() => {
 
     loadContacts();
   }, [user]);
+useEffect(() => {
+  if (!selectedContact || !user?.sub) return;
 
+  markConversationAsRead(
+    selectedContact.user.id,
+    user.sub
+  );
+}, [selectedContact, user?.sub]);
   // 🔥 FILTER
   const filteredContacts = contacts.filter(
     (c) =>
@@ -427,8 +435,13 @@ useEffect(() => {
           return (
             <div
               key={index}
-onClick={() => {
+onClick={async () => {
   setSelectedContact(c);
+
+  await markConversationAsRead(
+    c.user.id,
+    user!.sub
+  );
 
   if (window.innerWidth < 1024) {
     setShowChat(true);

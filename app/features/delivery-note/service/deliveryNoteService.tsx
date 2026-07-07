@@ -19,25 +19,29 @@ export const fetchDN = async (userId: number) => {
     return [];
   }
 };
-export const downloadDN =async(id:number)=>{
-  
-    try {
-      const res = api.get(
-        `/delivery-note/pdf/${id}`,
-        { responseType: "blob" }
-      );
+export const downloadDN = async (id: number) => {
+  try {
+    const language = localStorage.getItem("language") ;
+console.log(language)
+    const res = await api.get(
+      `/delivery-note/pdf/${id}?language=${language}`,
+      {
+        responseType: "blob",
+      }
+    );
 
-      const url = window.URL.createObjectURL(new Blob([(await res).data]));
-      const link = document.createElement("a");
+    const url = window.URL.createObjectURL(
+      new Blob([res.data])
+    );
 
-      link.href = url;
-      link.setAttribute("download", `DN-${id}.pdf`);
-      document.body.appendChild(link);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `DN-${id}.pdf`;
 
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Erreur téléchargement PDF:", error);
-    }
-
-}
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Erreur téléchargement PDF:", error);
+  }
+};
