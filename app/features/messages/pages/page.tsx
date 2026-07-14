@@ -55,6 +55,7 @@ function MessagesPage() {
 const [showDeleteModal, setShowDeleteModal] = useState(false);
 const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
 const [showChat, setShowChat] = useState(false);
+
 const handleDeleteMessage = async () => {
   if (!messageToDelete) return;
 
@@ -589,18 +590,18 @@ onClick={async () => {
     )}
 
     {msg.fileUrl && (
-      <a
-        href={`https://${process.env.BACKLINK}${msg.fileUrl}`}
-        target="_blank"
-        rel="noreferrer"
-        className={`block mt-2 underline text-sm ${
-          isMine
-            ? "text-white"
-            : "text-[#6C4DFF]"
-        }`}
-      >
-        📄 Open File
-      </a>
+<a
+  href={`${
+    process.env.NODE_ENV === "production" ? "https" : "http"
+  }://${process.env.NEXT_PUBLIC_BACKLINK}${msg.fileUrl}`}
+  target="_blank"
+  rel="noreferrer"
+  className={`block mt-2 underline text-sm ${
+    isMine ? "text-white" : "text-[#6C4DFF]"
+  }`}
+>
+  📄 Open File
+</a>
     )}
 
     <p
