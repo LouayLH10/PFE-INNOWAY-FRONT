@@ -204,8 +204,7 @@ const menuItems = [
             onClick={() =>
               setOpen(!open)
             }
-            className="text-gray-500 hover:text-black transition"
-          >
+  className="opacity-0 lg:opacity-100 text-gray-500 hover:text-black transition"          >
             <Menu size={22} />
           </button>
         </div>
