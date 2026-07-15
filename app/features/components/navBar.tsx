@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Search, Timer } from "lucide-react";
 import { usePathname } from "next/navigation";
 import LanguageSwitcher from "./languageSwitcher";
 import { useTranslation } from "react-i18next";
+import Reminders from "../dashboard/components/reminders";
 
 function NavBar() {
   const { t } = useTranslation("navbar");
   const pathname = usePathname();
-
+const [showReminders, setShowReminders] = useState(false);
   const menuItems = [
     {
       name: t("pages.dashboard"),
@@ -49,6 +50,7 @@ function NavBar() {
     menuItems.find((item) => item.path === pathname)?.name ?? "";
 
   return (
+    <>
     <nav className="w-full bg-white rounded-2xl md:rounded-[30px] shadow-xl border border-gray-100 px-4 md:px-8 py-4 md:py-5">
       <div className="flex items-center justify-between gap-4">
 
@@ -82,18 +84,42 @@ function NavBar() {
 
           <LanguageSwitcher />
 
-          <button className="relative w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition">
-            <Timer
-              size={18}
-              className="md:w-[22px] md:h-[22px]"
-            />
+<button
+  onClick={() => setShowReminders(true)}
+  className="relative w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#f5f5f7] hover:bg-[#edeaff] flex items-center justify-center text-gray-600 hover:text-[#6C4DFF] transition"
+>
+  <Timer
+    size={18}
+    className="md:w-[22px] md:h-[22px]"
+  />
 
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500" />
-          </button>
+  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500" />
+</button>
 
         </div>
       </div>
     </nav>
+    {showReminders && (
+  <div
+    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    onClick={() => setShowReminders(false)}
+  >
+    <div
+      className="relative w-[95%] max-w-2xl bg-white rounded-3xl shadow-2xl p-6"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={() => setShowReminders(false)}
+        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+      >
+        ✕
+      </button>
+
+      <Reminders />
+    </div>
+  </div>
+)}
+    </>
   );
 }
 
