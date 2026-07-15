@@ -352,16 +352,12 @@ const Status = (status: string) => {
           </div>
 
           <button
-            disabled={
-              d.status !== "RECIEVED" &&
-              d.status !== "PAID"
-            }
+       
             onClick={() => downloadInvoice(d.id)}
             className={`w-full mt-5 py-3 rounded-2xl text-white font-semibold ${
-              d.status === "RECIEVED" ||
-              d.status === "PAID"
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-gray-300 cursor-not-allowed"
+             
+                 "bg-green-600 hover:bg-green-700"
+              
             }`}
           >
             {t("buttons.download")}
